@@ -7,6 +7,12 @@ Hello World
 :category: misc
 :slug: hello-world
 :authors: axju
-:summary: This is me
+:summary: Just a new blog where I share my coding experience. Have fun.
 
-This is me, a new post.
+Just a new blog where I share my coding experience. Have fun.
+
+I built it with Pelican and the them
+`alchemy <https://github.com/nairobilug/pelican-alchemy>`_.
+Check this out, if you like nice clean bootstrap design.
+
+The source will be available on `github <https://github.com/axju/blogging>`_.

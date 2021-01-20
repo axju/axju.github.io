@@ -5,7 +5,9 @@ Setup
 
 .. code:: bash
 
-    python -m pip install pelican
+    python3 -m venv venv
+    source venv/bin/activate
+    python -m pip install --upgrade pip pelican
 
 Create html:
 
@@ -13,3 +15,9 @@ Create html:
 
     pelican content
     pelican content -s publishconf.py
+
+Preview your site:
+
+.. code:: bash
+
+    pelican --listen
