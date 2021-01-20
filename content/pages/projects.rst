@@ -8,4 +8,15 @@ Projects
 :authors: axju
 :summary: This is me
 
-Just a list with all my projects.
+Just a list with all my projects
+--------------------------------
+
+Watch me coding
+~~~~~~~~~~~~~~~
+This is a small toolbox to record my coding.
+
++------------+------------+-----------+
+| Languge    | Header 2   | Header 3  |
++------------+------------+-----------+
+| Python     | Cells may  | - Cells   |
++------------+------------+-----------+

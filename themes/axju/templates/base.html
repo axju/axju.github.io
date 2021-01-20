@@ -30,11 +30,11 @@
   <link rel="stylesheet" href="{{ url(FONTAWESOME_CSS or '/theme/css/fontawesome.min.css') }}">
   <link rel="stylesheet" href="{{ SITEURL }}/theme/css/pygments/{{ PYGMENTS_STYLE|default('default') }}.min.css">
   <link rel="stylesheet" href="{{ SITEURL }}/theme/css/theme.css">
-  <link rel="stylesheet" type="text/css" href="theme/css/purecookie.css" async />
-  <script src="theme/js/purecookie.js" async></script>
+  <link rel="stylesheet" type="text/css" href="{{ SITEURL }}/theme/css/purecookie.css" async />
   {% for stylesheet in THEME_CSS_OVERRIDES or () %}
   <link rel="stylesheet" href="{{ url(stylesheet) }}">
   {% endfor %}
+  <script src="{{ SITEURL }}/theme/js/purecookie.js" async></script>
 
   {% include 'include/xml_feeds.html' %}
   {% block head %}{% endblock %}
