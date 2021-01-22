@@ -7,6 +7,20 @@
 {{ SITEURL + '/' + destination }}
 {%- endif -%}
 {%- endmacro -%}
+
+{%- macro fa(icon) -%}
+{%- set fa_special_icons = {
+  "feed": "fas fa-rss",
+  "rss": "fas fa-rss",
+} -%}
+{%- if icon in fa_special_icons -%}
+{{ fa_special_icons[icon] }}
+{%- elif icon.split()|select("in", ["fab", "fas", "far", "fal", "fad"])|list -%}
+{{ icon }}
+{%- else -%}
+fab fa-{{icon}}
+{%- endif -%}
+{%- endmacro -%}
 <!doctype html>
 <html lang="{{ DEFAULT_LANG }}">
 

@@ -23,6 +23,8 @@ ICONS = (('github', 'https://github.com/axju'),
          ('youtube', 'https://www.youtube.com/channel/UCFFrfCiHAh0gaQvGZBYMsuA'),
          ('twitter', 'https://twitter.com/0xAxJu'),)
 
+FOOTER_ICONS = (('rss', 'feeds/all.atom.xml'),)
+
 DEFAULT_PAGINATION = 10
 
 EXTRA_PATH_METADATA = {
