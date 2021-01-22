@@ -40,6 +40,13 @@ ARTICLE_SAVE_AS = 'posts/{date:%Y}/{date:%m}/{slug}/index.html'
 PAGE_URL = 'pages/{slug}/'
 PAGE_SAVE_AS = 'pages/{slug}/index.html'
 
+PLUGIN_PATHS = ['plugins']
+PLUGINS = ['fontawesome']
+# PLUGINS = [
+#     'pelican_fontawesome',
+# ]
+# CSS_FILE = 'oldstyle.css'
+
 # Theme settings
 
 THEME = 'themes/axju'
