@@ -1,22 +1,18 @@
 Projects
 ========
 
-:date: 2021-01-18 20:21
-:modified: 2021-01-18 20:21
-:tags: hello, world
-:category: stuff
 :authors: axju
-:summary: This is me
 
-Just a list with all my projects
---------------------------------
-
-Watch me coding
-~~~~~~~~~~~~~~~
+wmc - Watch me coding
+~~~~~~~~~~~~~~~~~~~~~
 This is a small toolbox to record my coding.
 
-+------------+------------+-----------+
-| Languge    | Header 2   | Header 3  |
-+------------+------------+-----------+
-| Python     | Cells may  | - Cells   |
-+------------+------------+-----------+
+`source <https://github.com/axju/wmc>`__
+
+joke - Jokes for python
+~~~~~~~~~~~~~~~~~~~~~~~
+I was really sad, no package called joke. So I decided to create one, really
+fast. This package have some functions, that return some jokes, quotes or facts.
+If you are sad, use the joke packages. :)
+
+`source <https://github.com/axju/joke>`__
