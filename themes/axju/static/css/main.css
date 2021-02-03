@@ -46,3 +46,7 @@ blockquote {
 .pagination .page-link {
   color: #333;
 }
+
+img {
+  margin-bottom: 15px;
+}

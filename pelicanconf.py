@@ -47,14 +47,18 @@ PLUGINS = ['fontawesome']
 # ]
 # CSS_FILE = 'oldstyle.css'
 
+STATIC_PATHS = ['images', ]
+ARTICLE_PATHS = ['articles']
+
 # Theme settings
 
 THEME = 'themes/axju'
-THEME_CSS_OVERRIDES = ['theme/css/oldstyle.css']
 
 SITESUBTITLE = 'Just coding stuff'
 
 SITEIMAGE = 'images/logo.png'
+
+PYGMENTS_STYLE = 'native'
 
 HIDE_AUTHORS = True
 RFG_FAVICONS = False
