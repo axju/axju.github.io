@@ -3,6 +3,37 @@ Projects
 
 :authors: axju
 
+----
+
+pynindo - The Python API for Nindo.de
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. image:: https://img.shields.io/github/languages/top/axju/pynindo
+    :alt: GitHub top language
+    :target: https://github.com/axju/pynindo
+
+.. image:: https://img.shields.io/tokei/lines/github/axju/pynindo
+   :alt: Lines of code
+   :target: https://github.com/axju/pynindo
+
+.. image:: https://img.shields.io/pypi/pyversions/pynindo
+   :alt: PyPI - Python Version
+   :target: https://pypi.org/project/pynindo/
+
+.. image:: https://img.shields.io/jenkins/build/https/jenkins.axju.de/job/axju/job/pynindo/job/master
+   :alt: Jenkins
+   :target: https://jenkins.axju.de/job/axju/job/pynindo/
+
+.. image:: https://img.shields.io/jenkins/coverage/cobertura/https/jenkins.axju.de/job/axju/job/pynindo/job/master
+   :alt: Jenkins Coverage
+   :target: https://jenkins.axju.de/job/axju/job/pynindo/
+
+The Youtuber **rezo** create a social media charts and statistics page. I
+developed this small Python API for it. It also includes a small CLI so you can
+write your own bash script or review the new media charts from the command line.
+`more <https://github.com/axju/pynindo>`__
+
+----
+
 wmc - watch me coding
 ~~~~~~~~~~~~~~~~~~~~~
 .. image:: https://img.shields.io/github/languages/top/axju/wmc
@@ -68,3 +99,22 @@ lying - run a fake terminal
 This small project create a fake terminal, run fake commands and display fake
 results. So, yes it's lying.
 `more <https://github.com/axju/lying>`__
+
+----
+
+wpexport - backup wordpress post
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. image:: https://img.shields.io/github/languages/top/axju/wpexport
+    :alt: GitHub top language
+    :target: https://github.com/axju/wpexport
+
+.. image:: https://img.shields.io/tokei/lines/github/axju/wpexport
+   :alt: Lines of code
+   :target: https://github.com/axju/wpexport
+
+.. image:: https://img.shields.io/pypi/pyversions/wpexport
+   :alt: PyPI - Python Version
+   :target: https://pypi.org/project/wpexport/
+
+This small python package backup your Wordpress post.
+`more <https://github.com/axju/wpexport>`__
