@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*- #
+from datetime import datetime
 
 AUTHOR = 'Axel Juraske'
 SITENAME = 'axju'
@@ -53,6 +54,8 @@ ARTICLE_PATHS = ['articles']
 # Theme settings
 
 THEME = 'themes/axju'
+
+DATE = datetime.now()
 
 SITESUBTITLE = 'Just coding stuff'
 
