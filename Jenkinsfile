@@ -17,7 +17,7 @@ pipeline {
         sh 'python -m pelican content -s publishconf.py'
       }
     }
-    stage('build') {
+    stage('publish') {
       when {
         branch 'master'
       }
