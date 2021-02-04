@@ -7,14 +7,18 @@ pipeline {
   stages {
     stage('setup') {
       steps {
-        sh 'python -m pip install --upgrade pip pelican'
-        sh 'python --version'
-        sh 'python -m pelican --version'
+        withEnv(["HOME=${env.WORKSPACE}"]) {
+          sh 'python -m pip install --user --upgrade pip pelican'
+          sh 'python --version'
+          sh 'python -m pelican --version'
+        }
       }
     }
     stage('build') {
       steps {
-        sh 'python -m pelican content -s publishconf.py'
+        withEnv(["HOME=${env.WORKSPACE}"]) {
+          sh 'python -m pelican content -s publishconf.py'
+        }
       }
     }
     stage('publish') {
