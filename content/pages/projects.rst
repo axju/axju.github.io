@@ -23,7 +23,7 @@ This is a small toolbox to record my coding.
 
 joke - jokes for python
 ~~~~~~~~~~~~~~~~~~~~~~~
-:shields-python:`joke axju-joke`
+:shields-python:`joke axju-jokes`
 I was really sad, no package called joke. So I decided to create one, really
 fast. This package have some functions, that return some jokes, quotes or facts.
 If you are sad, use the joke packages. :awesome:`fas fa-smile-wink`
