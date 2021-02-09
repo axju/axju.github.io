@@ -18,7 +18,7 @@ def shields_full(name, rawtext, text, lineno, inliner, options={}, content=[]):
     values = text.split()
     github = values[0]
     pypi = values[1] if len(values) > 1 else values[0]
-    html = (SHILDS_PYTHON + SHILDS_JENKINS + '<br>').format(github=github, pypi=pypi, jenkins=github)
+    html = (SHILDS_JENKINS + SHILDS_PYTHON + '<br>').format(github=github, pypi=pypi, jenkins=github)
     return [nodes.raw('', html, format='html')], []
 
 def shields_python(name, rawtext, text, lineno, inliner, options={}, content=[]):
