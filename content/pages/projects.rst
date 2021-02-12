@@ -67,6 +67,14 @@ web pages, but I want a python package.
 
 ----
 
+justic - just static
+~~~~~~~~~~~~~~~~~~~~
+:shields-full:`justic`
+Just a static site generator
+`more <https://github.com/axju/justic>`__
+
+----
+
 code2image - create code snippet
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 :shields-python:`code2image`
