@@ -9,7 +9,7 @@ For a long time I run my Jenkins server only in my local Network. Therefore I
 don't setup a real web server. But if I want to have some nice shields with
 build status and code coverage, I need to make my Jenkins server public. And for
 this, I setup Nginx as a reverse proxy. To make It secure, I enable SSL with the
-certbot for Let's Encrypt. What wars rally easy.
+certbot for `Let's Encrypt <https://letsencrypt.org>`__. What wars rally easy.
 
 The official documentation is quite good,
 `check them out <https://www.jenkins.io/doc/book/system-administration/reverse-proxy-configuration-nginx/>`__.
