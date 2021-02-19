@@ -1,10 +1,9 @@
 A reverse shell with Python
 ===========================
 
-:status: draft
-:date: 2021-02-19 20:15
+:date: 2021-02-19 19:00
 :tags: security, linux, hacking, shell, sockets
-:summary: I build a reverse shell with python and uses ngrok to make the server public
+:summary: I'll show you how to create a reverse shell using Python and how to make the server public using ngrok
 
 **Disclaimer**: The described methods should only be used for systems which you
 have access rights. I used this method to get access to my mums PC, which I was
