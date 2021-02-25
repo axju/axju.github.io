@@ -10,7 +10,7 @@ sys.path.append(os.curdir)
 from pelicanconf import *
 
 # If your site is available via HTTPS, make sure SITEURL begins with https://
-SITEURL = 'https://axju.de'
+SITEURL = 'http://z3wkaghfy4cmuqcrgskpvdava55qsbfrz5vvqthuemv2cktuwxvztcyd.onion/'
 RELATIVE_URLS = False
 
 FEED_ALL_ATOM = 'feeds/all.atom.xml'
@@ -18,9 +18,4 @@ CATEGORY_FEED_ATOM = 'feeds/{slug}.atom.xml'
 
 DELETE_OUTPUT_DIRECTORY = True
 
-# Following items are often useful when publishing
-
-DISQUS_SITENAME = "axju"
-GOOGLE_ANALYTICS = "G-XXNP9SDM8F"
-
-COOKIE_POLICY = True
+COOKIE_POLICY = False

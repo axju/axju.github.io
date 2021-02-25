@@ -46,8 +46,10 @@ fab fa-{{icon}}
   <link rel="stylesheet" href="{{ SITEURL }}/theme/css/pygments/{{ PYGMENTS_STYLE|default('default') }}.min.css">
   <link rel="stylesheet" href="{{ SITEURL }}/theme/css/theme.css">
   <link rel="stylesheet" href="{{ SITEURL }}/theme/css/main.css">
+  {% if COOKIE_POLICY %}
   <link rel="stylesheet" href="{{ SITEURL }}/theme/css/purecookie.css" async />
   <script src="{{ SITEURL }}/theme/js/purecookie.js" async></script>
+  {% endif %}
 
   {% include 'include/xml_feeds.html' %}
   {% block head %}{% endblock %}
