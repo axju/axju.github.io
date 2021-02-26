@@ -8,7 +8,7 @@ Hidden Service
 I want to know how to set up a hidden service on the Tor network aka the
 darknet. The goal is to have a copy of this blog on the darknet. Check out the
 `Tor project <https://www.torproject.org>`_ to learn more about the darknet. I
-will only explain oh to setup a hidden servers not the darknet himself.
+will only explain how to setup a hidden servers, not the darknet himself.
 
 **Tor project:** *We believe everyone should be able to explore the internet with
 privacy. We are the Tor Project, a 501(c)3 US nonprofit. We advance human rights
@@ -21,7 +21,9 @@ Now that you know what the Tor project is, you already have the
 great. But how do I create the hidden service for my blog? That was surprisingly
 easy. It only takes a few steps. The
 `official documentation <https://community.torproject.org/onion-services/setup/>`_
-is quite well, read it and have some fun.
+is quite well, read it and have some fun. It wars so simple that I also want to
+create an example Django project behind a hidden service. Witch is just an
+example and should work with all WSGI apps.
 
 Install tor
 -----------
@@ -75,7 +77,7 @@ with
     }
   }
 
-Create the www folder
+Create the www folder for the html files
 
 .. code-block:: nginx
 
@@ -124,10 +126,10 @@ Get the hostname with
   sudo cat /var/lib/tor/axju/hostname
 
 
-Extra - bind a wsgi app
+Extra - bind a WSGI app
 -----------------------
 It was so simple that I need something challenging. I'm going to show you how to
-set up a Django project behind a hidden service. You should know the Django.
+set up a Django project behind a hidden service. You should already know Django.
 
 1. Setup Django
 ~~~~~~~~~~~~~~~
@@ -167,11 +169,13 @@ Change only the line with the allowed hosts
 
 2. Change the Tor config
 ~~~~~~~~~~~~~~~~~~~~~~~~
+Open the file
+
 .. code-block:: bash
 
   sudo nano /etc/tor/torrc
 
-from
+and change the hidden service port from
 
 .. code-block:: bash
 
@@ -193,11 +197,14 @@ Restart Tor
 
 Run gunicorn
 ~~~~~~~~~~~~
-Run gunicorn to bind the wsgi app
+Run gunicorn to bind the WSGI app
 
 .. code-block:: bash
 
   gunicorn --bind 127.0.0.1:8000 myproject.wsgi
+
+Of course this is just an example. If you are setup a real service, you will use
+a systemd service or something similar.
 
 
 Final notes
@@ -208,8 +215,5 @@ Yes that wars easy and yes you have to do more to hide your service.
   * `Operational Security <https://community.torproject.org/onion-services/advanced/opsec/>`_
 
 I also setup Jenkins to automate the publishing. The darknet copy of this blog
-will always be a little bit newer than the main build. So uses the tor browser
-to be the first one to read my post.
-
-For wsgi binding with Gunicorn. Of course this is just an example. If you are
-setup a real service, you will use a systemd service.
+will always be a little bit newer than the main build. Uses the tor browser to
+be the first one to read my post.
