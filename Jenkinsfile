@@ -1,6 +1,7 @@
 pipeline {
   agent {
     docker {
+      label 'dragon'
       image 'python:3.8'
     }
   }
@@ -21,11 +22,14 @@ pipeline {
         }
       }
     }
-    stage('publish') {
+    stage('publish - netcup') {
       when {
         branch 'master'
       }
       steps {
+        withEnv(["HOME=${env.WORKSPACE}"]) {
+          sh 'python -m pelican content -s publishconf.py'
+        }
         sshPublisher(
           publishers: [
             sshPublisherDesc(
@@ -43,6 +47,31 @@ pipeline {
         )
       }
     }
+
+    stage('publish - raspberrypi') {
+      steps {
+        withEnv(["HOME=${env.WORKSPACE}"]) {
+          sh 'python -m pelican content -s raspiconf.py'
+        }
+        sshPublisher(
+          publishers: [
+            sshPublisherDesc(
+              configName: 'raspberrypi',
+              sshRetry: [retries: 5, retryDelay: 10000],
+              transfers: [
+                sshTransfer(
+                  remoteDirectory: 'axju',
+                  removePrefix: 'output/',
+                  sourceFiles: 'output/**/*'
+                )
+              ]
+            )
+          ]
+        )
+      }
+    }
+
+
   }
   post {
     always {

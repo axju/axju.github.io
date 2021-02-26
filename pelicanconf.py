@@ -65,3 +65,5 @@ PYGMENTS_STYLE = 'native'
 
 HIDE_AUTHORS = True
 RFG_FAVICONS = False
+
+COOKIE_POLICY = False
