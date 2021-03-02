@@ -3,7 +3,7 @@ DevOps for blogging with Pelican
 
 :date: 2021-03-02 20:15
 :category: devops
-:tags: pelican, pathon, jenkins, devops
+:tags: pelican, python, jenkins, devops
 :summary: One (easy) way to automate your blogging with Pelican and Jenkins.
 
 
