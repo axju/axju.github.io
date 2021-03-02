@@ -15,13 +15,7 @@ pipeline {
         }
       }
     }
-    stage('build') {
-      steps {
-        withEnv(["HOME=${env.WORKSPACE}"]) {
-          sh 'python -m pelican content -s publishconf.py'
-        }
-      }
-    }
+    
     stage('publish - netcup') {
       when {
         branch 'master'

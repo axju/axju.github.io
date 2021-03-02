@@ -9,11 +9,11 @@ Jenkins node
 
 First create the node like this:
 
-.. image:: {static}/images/articels/jankins-on-raspberry-pi/jenkins-001.png
+.. image:: {static}/images/articels/jenkins/jenkins-001.png
   :width: 45 %
   :alt: alternate text
 
-.. image:: {static}/images/articels/jankins-on-raspberry-pi/jenkins-002.png
+.. image:: {static}/images/articels/jenkins/jenkins-002.png
   :width: 53 %
   :alt: alternate text
 
