@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom"><title>axju - devops</title><link href="https://axju.github.io/" rel="alternate"></link><link href="https://axju.github.io/feeds/devops.atom.xml" rel="self"></link><id>https://axju.github.io/</id><updated>2021-03-02T20:15:00+01:00</updated><subtitle>Just coding stuff</subtitle><entry><title>DevOps for blogging with Pelican</title><link href="https://axju.github.io/posts/2021/03/devops-for-blogging-with-pelican/" rel="alternate"></link><published>2021-03-02T20:15:00+01:00</published><updated>2021-03-02T20:15:00+01:00</updated><author><name>Axel Juraske</name></author><id>tag:axju.github.io,2021-03-02:/posts/2021/03/devops-for-blogging-with-pelican/</id><summary type="html">&lt;p class="first last"&gt;One (easy) way to automate your blogging with Pelican and Jenkins.&lt;/p&gt;
+</summary><content type="html">&lt;p&gt;Today I will show you my blogging setup and workflow. A few years ago I build a
+blog with &lt;a class="reference external" href="https://flask.palletsprojects.com/en/1.1.x/"&gt;Flask&lt;/a&gt;. But this wars
+more a project to learn &lt;a class="reference external" href="https://www.python.org"&gt;Python&lt;/a&gt;. I like to share
+my coding experience, but maintaining a self build blog software wars more pain
+then fun. So I switch to &lt;a class="reference external" href="https://wordpress.com/"&gt;WordPress&lt;/a&gt;. And yes,
+that &lt;a class="reference external" href="https://www.short-report.de/"&gt;works fine&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;To be honest, I don't like &lt;a class="reference external" href="https://wordpress.com/"&gt;WordPress&lt;/a&gt;. It has to be
+good software, but I don't like writing in the cloud. I like to have my post as
+a plain text on my local device. I write some tools to make that work. But
+again, I would share my experience as a developer and not maintain some nasty
+projects.&lt;/p&gt;
+&lt;p&gt;It was also the time when we renovated our house and had children shortly
+afterwards. So I had less time to look after my blog. Now as they get older, I
+have more time for this. And my DevOps skills have also increased. I setup a
+&lt;a class="reference external" href="https://axju.github.io/posts/2021/02/jenkins-meet-raspberry-pi/"&gt;Jenkins server&lt;/a&gt;
+and play with it, just for fun. And then I discovered
+&lt;a class="reference external" href="https://docs.getpelican.com/en/3.6.3/index.html"&gt;Pelican&lt;/a&gt;, as static page
+generator. This would change my blogging workflow to the following:&lt;/p&gt;
+&lt;ol class="arabic simple"&gt;
+&lt;li&gt;I write the content(rst files) on my locale device.&lt;/li&gt;
+&lt;li&gt;With Pelican I create the HTML files and look at the preview blog.&lt;/li&gt;
+&lt;li&gt;If I'm happy with the result, I push them to a git repository.&lt;/li&gt;
+&lt;li&gt;The Jenkins server build the finale blog and publish it.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;And that's it. I just want to share how my blogging workflow look. If you are
+interesting in the technical details, go on. Otherwise have a nice day.&lt;/p&gt;
+&lt;div class="section" id="some-details"&gt;
+&lt;h2&gt;Some details&lt;/h2&gt;
+&lt;p&gt;The git repository has a &lt;em&gt;Jenkinsfile&lt;/em&gt;, which will be read from the Jenkins
+server. When I commit my changes to the repository, a webhook triggers the build
+process on the server.&lt;/p&gt;
+&lt;p&gt;To publish the blog I installed the plugin &lt;em&gt;Publish Over SSH&lt;/em&gt; on the Jenkins
+server. With this I can copy the HTML files to the web server. You can have
+several configuration files for your
+&lt;a class="reference external" href="https://docs.getpelican.com/en/3.6.3/index.html"&gt;Pelican&lt;/a&gt; project. I have
+one for development, one for the web server and one for a hidden service. The
+web server build is only executed in the main branch. So the onion version of my
+blog is always a little newer.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="jenkinsfile"&gt;
+&lt;h2&gt;Jenkinsfile&lt;/h2&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;pipeline &lt;span class="o"&gt;{&lt;/span&gt;
+  agent &lt;span class="o"&gt;{&lt;/span&gt;
+    docker &lt;span class="o"&gt;{&lt;/span&gt;
+      image &lt;span class="s1"&gt;&amp;#39;python:3.8&amp;#39;&lt;/span&gt;
+    &lt;span class="o"&gt;}&lt;/span&gt;
+  &lt;span class="o"&gt;}&lt;/span&gt;
+  stages &lt;span class="o"&gt;{&lt;/span&gt;
+    stage&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;setup&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+      steps &lt;span class="o"&gt;{&lt;/span&gt;
+        withEnv&lt;span class="o"&gt;([&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;HOME=&lt;/span&gt;&lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;env&lt;/span&gt;&lt;span class="p"&gt;.WORKSPACE&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;])&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+          sh &lt;span class="s1"&gt;&amp;#39;python -m pip install --user --upgrade pip pelican&amp;#39;&lt;/span&gt;
+          sh &lt;span class="s1"&gt;&amp;#39;python --version&amp;#39;&lt;/span&gt;
+          sh &lt;span class="s1"&gt;&amp;#39;python -m pelican --version&amp;#39;&lt;/span&gt;
+        &lt;span class="o"&gt;}&lt;/span&gt;
+      &lt;span class="o"&gt;}&lt;/span&gt;
+    &lt;span class="o"&gt;}&lt;/span&gt;
+
+    stage&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;publish - web&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+      when &lt;span class="o"&gt;{&lt;/span&gt;
+        branch &lt;span class="s1"&gt;&amp;#39;master&amp;#39;&lt;/span&gt;
+      &lt;span class="o"&gt;}&lt;/span&gt;
+      steps &lt;span class="o"&gt;{&lt;/span&gt;
+        withEnv&lt;span class="o"&gt;([&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;HOME=&lt;/span&gt;&lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;env&lt;/span&gt;&lt;span class="p"&gt;.WORKSPACE&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;])&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+          sh &lt;span class="s1"&gt;&amp;#39;python -m pelican content -s publishconf.py&amp;#39;&lt;/span&gt;
+        &lt;span class="o"&gt;}&lt;/span&gt;
+        sshPublisher&lt;span class="o"&gt;(&lt;/span&gt;
+          publishers: &lt;span class="o"&gt;[&lt;/span&gt;
+            sshPublisherDesc&lt;span class="o"&gt;(&lt;/span&gt;
+              configName: &lt;span class="s1"&gt;&amp;#39;web-projects&amp;#39;&lt;/span&gt;,
+              sshRetry: &lt;span class="o"&gt;[&lt;/span&gt;retries: &lt;span class="m"&gt;5&lt;/span&gt;, retryDelay: &lt;span class="m"&gt;10000&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;,
+              transfers: &lt;span class="o"&gt;[&lt;/span&gt;
+                sshTransfer&lt;span class="o"&gt;(&lt;/span&gt;
+                  remoteDirectory: &lt;span class="s1"&gt;&amp;#39;axju&amp;#39;&lt;/span&gt;,
+                  removePrefix: &lt;span class="s1"&gt;&amp;#39;output/&amp;#39;&lt;/span&gt;,
+                  sourceFiles: &lt;span class="s1"&gt;&amp;#39;output/**/*&amp;#39;&lt;/span&gt;
+                &lt;span class="o"&gt;)&lt;/span&gt;
+              &lt;span class="o"&gt;]&lt;/span&gt;
+            &lt;span class="o"&gt;)&lt;/span&gt;
+          &lt;span class="o"&gt;]&lt;/span&gt;
+        &lt;span class="o"&gt;)&lt;/span&gt;
+      &lt;span class="o"&gt;}&lt;/span&gt;
+    &lt;span class="o"&gt;}&lt;/span&gt;
+
+    stage&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;publish - onion&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+      steps &lt;span class="o"&gt;{&lt;/span&gt;
+        withEnv&lt;span class="o"&gt;([&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;HOME=&lt;/span&gt;&lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;env&lt;/span&gt;&lt;span class="p"&gt;.WORKSPACE&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;])&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+          sh &lt;span class="s1"&gt;&amp;#39;python -m pelican content -s raspiconf.py&amp;#39;&lt;/span&gt;
+        &lt;span class="o"&gt;}&lt;/span&gt;
+        sshPublisher&lt;span class="o"&gt;(&lt;/span&gt;
+          publishers: &lt;span class="o"&gt;[&lt;/span&gt;
+            sshPublisherDesc&lt;span class="o"&gt;(&lt;/span&gt;
+              configName: &lt;span class="s1"&gt;&amp;#39;onion-projects&amp;#39;&lt;/span&gt;,
+              sshRetry: &lt;span class="o"&gt;[&lt;/span&gt;retries: &lt;span class="m"&gt;5&lt;/span&gt;, retryDelay: &lt;span class="m"&gt;10000&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;,
+              transfers: &lt;span class="o"&gt;[&lt;/span&gt;
+                sshTransfer&lt;span class="o"&gt;(&lt;/span&gt;
+                  remoteDirectory: &lt;span class="s1"&gt;&amp;#39;axju&amp;#39;&lt;/span&gt;,
+                  removePrefix: &lt;span class="s1"&gt;&amp;#39;output/&amp;#39;&lt;/span&gt;,
+                  sourceFiles: &lt;span class="s1"&gt;&amp;#39;output/**/*&amp;#39;&lt;/span&gt;
+                &lt;span class="o"&gt;)&lt;/span&gt;
+              &lt;span class="o"&gt;]&lt;/span&gt;
+            &lt;span class="o"&gt;)&lt;/span&gt;
+          &lt;span class="o"&gt;]&lt;/span&gt;
+        &lt;span class="o"&gt;)&lt;/span&gt;
+      &lt;span class="o"&gt;}&lt;/span&gt;
+    &lt;span class="o"&gt;}&lt;/span&gt;
+
+
+  &lt;span class="o"&gt;}&lt;/span&gt;
+  post &lt;span class="o"&gt;{&lt;/span&gt;
+    always &lt;span class="o"&gt;{&lt;/span&gt;
+      cleanWs&lt;span class="o"&gt;()&lt;/span&gt;
+    &lt;span class="o"&gt;}&lt;/span&gt;
+  &lt;span class="o"&gt;}&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/div&gt;
+</content><category term="devops"></category><category term="pelican"></category><category term="python"></category><category term="jenkins"></category><category term="devops"></category></entry><entry><title>Jenkins meet Nginx</title><link href="https://axju.github.io/posts/2021/02/jenkins-meet-nginx/" rel="alternate"></link><published>2021-02-16T20:15:00+01:00</published><updated>2021-02-16T20:15:00+01:00</updated><author><name>Axel Juraske</name></author><id>tag:axju.github.io,2021-02-16:/posts/2021/02/jenkins-meet-nginx/</id><summary type="html">&lt;p class="first last"&gt;Just a quick Nginx setup for Jenkins&lt;/p&gt;
+</summary><content type="html">&lt;p&gt;For a long time I run my Jenkins server only in my local Network. Therefore I
+don't setup a real web server. But if I want to have some nice shields with
+build status and code coverage, I need to make my Jenkins server public. And for
+this, I setup Nginx as a reverse proxy. To make It secure, I enable SSL with the
+certbot for &lt;a class="reference external" href="https://letsencrypt.org"&gt;Let's Encrypt&lt;/a&gt;. What wars rally easy.&lt;/p&gt;
+&lt;p&gt;The official documentation is quite good,
+&lt;a class="reference external" href="https://www.jenkins.io/doc/book/system-administration/reverse-proxy-configuration-nginx/"&gt;check them out&lt;/a&gt;.
+If you go through my how to you have to change some values, like your domain. I
+think this is all you have to change. And of course you have to set up your
+domains and configure your router.&lt;/p&gt;
+&lt;p&gt;Let us started. First install Nginx and certbot&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;sudo apt-get install -y nginx certbot python3-certbot-nginx
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Then delete Nginx default site&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;sudo rm /etc/nginx/sites-enabled/*
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;and also create the log directory&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;sudo mkdir /var/log/nginx/jenkins/
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Now we create the Jenkins configuration for Nginx. Create the file&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;sudo nano /etc/nginx/sites-available/jenkins
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;with&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;map&lt;/span&gt; &lt;span class="nv"&gt;$http_upgrade&lt;/span&gt; &lt;span class="nv"&gt;$connection_upgrade&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+  &lt;span class="kn"&gt;default&lt;/span&gt; &lt;span class="s"&gt;upgrade&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+  &lt;span class="kn"&gt;&amp;#39;&amp;#39;&lt;/span&gt; &lt;span class="s"&gt;close&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+
+&lt;span class="k"&gt;server&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+  &lt;span class="kn"&gt;listen&lt;/span&gt; &lt;span class="mi"&gt;80&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+  &lt;span class="kn"&gt;server_name&lt;/span&gt; &lt;span class="s"&gt;jenkins.example.com&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+
+  &lt;span class="kn"&gt;root&lt;/span&gt; &lt;span class="s"&gt;/var/run/jenkins/war/&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+  &lt;span class="kn"&gt;access_log&lt;/span&gt; &lt;span class="s"&gt;/var/log/nginx/jenkins/access.log&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+  &lt;span class="kn"&gt;error_log&lt;/span&gt; &lt;span class="s"&gt;/var/log/nginx/jenkins/error.log&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+
+  &lt;span class="kn"&gt;location&lt;/span&gt; &lt;span class="s"&gt;/&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="kn"&gt;include&lt;/span&gt; &lt;span class="s"&gt;/etc/nginx/proxy_params&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+
+    &lt;span class="kn"&gt;proxy_pass&lt;/span&gt;         &lt;span class="s"&gt;http://localhost:8080&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+    &lt;span class="kn"&gt;proxy_read_timeout&lt;/span&gt; &lt;span class="s"&gt;90s&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+    &lt;span class="kn"&gt;proxy_redirect&lt;/span&gt;     &lt;span class="s"&gt;default&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+    &lt;span class="kn"&gt;proxy_http_version&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="s"&gt;.1&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+
+    &lt;span class="kn"&gt;proxy_set_header&lt;/span&gt;   &lt;span class="s"&gt;Connection&lt;/span&gt;        &lt;span class="nv"&gt;$connection_upgrade&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+    &lt;span class="kn"&gt;proxy_set_header&lt;/span&gt;   &lt;span class="s"&gt;Upgrade&lt;/span&gt;           &lt;span class="nv"&gt;$http_upgrade&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+  &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Now enable the site and restart Nginx&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;sudo ln -s /etc/nginx/sites-available/jenkins /etc/nginx/sites-enabled/
+sudo systemctl restart nginx
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;If something went wrong, you can check the configuration with&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;sudo nginx -t
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;The Jenkins server is now available
+&lt;a class="reference external" href="http://jenkins.example.com"&gt;jenkins.example.com&lt;/a&gt; Change the Jenkins server
+configuration so that the server only listen on the loclahost. Edit the file
+&lt;em&gt;/etc/default/jenkins&lt;/em&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;sudo nano /etc/default/jenkins
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Find then &lt;em&gt;JENKINS_ARGS&lt;/em&gt; and add &lt;em&gt;--httpListenAddress=127.0.0.1&lt;/em&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;...
+JENKINS_ARGS=&amp;quot;--webroot=/var/cache/$NAME/war --httpPort=$HTTP_PORT --httpListenAddress=127.0.0.1&amp;quot;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;and restart Jenkins&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;sudo systemctl restart jenkins
+&lt;/pre&gt;&lt;/div&gt;
+&lt;div class="section" id="ssl-with-let-s-encrypt"&gt;
+&lt;h2&gt;SSL with Let's Encrypt&lt;/h2&gt;
+&lt;p&gt;This really easy. Simple run this&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;sudo certbot --nginx -d jenkins.example.com
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;and you are done. This will also add a cron job that will update the certificate
+if it expires within 30 days.&lt;/p&gt;
+&lt;/div&gt;
+</content><category term="devops"></category><category term="jenkins"></category><category term="devops"></category><category term="server"></category><category term="linux"></category><category term="nginx"></category></entry><entry><title>Jenkins meet Raspberry Pi</title><link href="https://axju.github.io/posts/2021/02/jenkins-meet-raspberry-pi/" rel="alternate"></link><published>2021-02-07T20:15:00+01:00</published><updated>2021-02-07T20:15:00+01:00</updated><author><name>Axel Juraske</name></author><id>tag:axju.github.io,2021-02-07:/posts/2021/02/jenkins-meet-raspberry-pi/</id><summary type="html">&lt;p class="first last"&gt;Yes, I like DevOps and the Raspberry Pi too. Now it's time to combine
+these and build a powerful DevOps server.&lt;/p&gt;
+</summary><content type="html">&lt;p&gt;First the question &lt;strong&gt;why&lt;/strong&gt;? And that's a very good question. There are so many
+different tools for CI/CD. Why should I set up something of my own? Obviously
+because it's fun and you learn something new. But I also don't like to work with
+a black box. I want full control, change everything.&lt;/p&gt;
+&lt;p&gt;And &lt;strong&gt;why&lt;/strong&gt; Jenkins and a Raspberry Pi? I don't want to spend a lot of money
+either, so no cloud. In my opinion, the Raspberry Pi is the best compromise
+between long-term availability and electricity costs. And it's just for fun, so
+if it goes down no one will care. Maybe I'm wrong, but I think Jenkins is the
+best open source automation server with low system resources. Perfect for a
+Raspberry Pi.&lt;/p&gt;
+&lt;p&gt;I won't go into much detail about each step. When I set up my server, I just
+wrote everything down and now summarize it briefly. I have obtained my
+information on:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;ul class="simple"&gt;
+&lt;li&gt;&lt;a class="reference external" href="https://www.jenkins.io/doc/book/installing/linux/"&gt;JenkinsDocs&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="reference external" href="https://raspberrytips.com/install-jenkins-raspberry-pi/"&gt;RaspberryTips&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="reference external" href="https://pimylifeup.com/jenkins-raspberry-pi/"&gt;PiMyLifeUp&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="reference external" href="https://www.raspberrypi.org/documentation/configuration/security.md"&gt;RaspberryPi&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;As I was writing this, I realized that my full setup is too much for one post.
+So this is only the first part and there is more to come. If you find a mistake
+or something is unclear, please write a comment.&lt;/p&gt;
+&lt;div class="section" id="setup-the-raspberry-pi"&gt;
+&lt;h2&gt;Setup the Raspberry Pi&lt;/h2&gt;
+&lt;p&gt;I'm using a Raspberry Pi with &lt;em&gt;Raspberry Pi OS Lite&lt;/em&gt;. After writing the
+operating system to the SD card, I create an empty file &lt;em&gt;SSH&lt;/em&gt; in the root
+directory of the SD card. This will enable the SSH server so you can simply log
+in using SSH. No need to connect a keyboard or monitor. Just scan your network
+with &lt;em&gt;nmap&lt;/em&gt; and then connect with the default username=pi and password=raspberry.
+You can also check your router to find the IP of your Raspberry Pi.&lt;/p&gt;
+&lt;p&gt;I run this&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;nmap &lt;span class="m"&gt;192&lt;/span&gt;.168.178.* -p &lt;span class="m"&gt;22&lt;/span&gt; --open
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;to find the IP. Then I connect with&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;ssh pi@192.168.178.35
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Now it's time to make your Pi just a little bit secure. We create a new user and
+add them to the &lt;em&gt;sudo&lt;/em&gt; group.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;sudo adduser axju
+sudo usermod -a -G adm,dialout,cdrom,sudo,audio,video,plugdev,games,users,input,netdev,gpio,i2c,spi axju
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Reconnect and delete the default user &lt;em&gt;pi&lt;/em&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="nb"&gt;exit&lt;/span&gt;
+ssh axju@192.168.178.35
+sudo deluser -remove-home pi
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Maybe you have to kill pi's process&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;sudo pkill -u pi
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Checkout &lt;a class="reference external" href="https://www.raspberrypi.org/documentation/configuration/security.md"&gt;this&lt;/a&gt;,
+if you want to make your Raspberry Pi even more secure.&lt;/p&gt;
+&lt;div class="section" id="change-hostname-optional"&gt;
+&lt;h3&gt;Change hostname (optional)&lt;/h3&gt;
+&lt;p&gt;There is no need to change the name, but I like it. You can use the IP address
+to connect to the server, but you can also use the hostname. So this should also
+work:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;ssh axju@raspberrypi.local
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;But I will change &lt;em&gt;raspberrypi.local&lt;/em&gt; to &lt;em&gt;jenkins.local&lt;/em&gt;. First open the
+&lt;em&gt;/etc/hosts&lt;/em&gt; file and update the lines with your old hostname:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;sudo nano /etc/hosts
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;from &lt;tt class="docutils literal"&gt;raspberrypi&lt;/tt&gt; to &lt;tt class="docutils literal"&gt;jenkins&lt;/tt&gt;. Next change the &lt;em&gt;/etc/hostname&lt;/em&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;sudo &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;jenkins&amp;quot;&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt; sudo tee /etc/hostname
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;And finally run&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;sudo hostname jenkins
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;and reboot&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;sudo reboot
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Now you can connect with &lt;tt class="docutils literal"&gt;ssh axju&amp;#64;jenkins.local&lt;/tt&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="section" id="install-jenkins"&gt;
+&lt;h2&gt;Install Jenkins&lt;/h2&gt;
+&lt;p&gt;This is really easy. First, update your system and install Java&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;sudo apt update
+sudo apt upgrade -y
+sudo apt install -y openjdk-11-jdk
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;To make sure it worked, check the version of java&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;java --version
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Now add Jenkins source to your &lt;em&gt;sources.list&lt;/em&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;wget -q -O - https://pkg.jenkins.io/debian/jenkins.io.key &lt;span class="p"&gt;|&lt;/span&gt; sudo apt-key add -
+sudo sh -c &lt;span class="s1"&gt;&amp;#39;echo deb https://pkg.jenkins.io/debian-stable binary/ &amp;gt; /etc/apt/sources.list.d/jenkins.list&amp;#39;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;No errors until now, then install Jenkins&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;sudo apt update
+sudo apt install -y jenkins
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Make sure that Jenkins is running&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;sudo systemctl status jenkins
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;That was all. After the installing the post-installation setup wizard begins.
+Fist unlock Jenkins. If you visited
+&lt;a class="reference external" href="http://jenkins.local:8080"&gt;http://jenkins.local:8080&lt;/a&gt;
+the first time, you have to enter a secret key. You will get it with&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;sudo cat /var/lib/jenkins/secrets/initialAdminPassword
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Now you can install some plugins. I uses the options &lt;em&gt;Install suggested plugins&lt;/em&gt;
+and create a admin account. If you get stuck are interested in more information,
+check the &lt;a class="reference external" href="https://www.jenkins.io/doc/book/getting-started/"&gt;documentation&lt;/a&gt;.&lt;/p&gt;
+&lt;img alt="alternate text" src="https://axju.github.io/images/articels/jenkins/jenkins-001.png" style="width: 57%;" /&gt;
+&lt;img alt="alternate text" src="https://axju.github.io/images/articels/jenkins/jenkins-002.png" style="width: 42%;" /&gt;
+&lt;/div&gt;
+&lt;div class="section" id="conclusion"&gt;
+&lt;h2&gt;Conclusion&lt;/h2&gt;
+&lt;p&gt;You see, install Jenkins is not that complicated. But for now, this is only a
+really simple setup. So what coming next? There is a lot of stuff to do. Fist
+you can improve the power of your server with some agents. The Raspberry Pi
+doesn't use a lot of electricity, but it doesn't have a lot of power either.
+On my final server, all operations were performed on the agents. This way the Pi
+won't sweat. I'm also running Jenkins behind a reverse proxy and enabled ssl.&lt;/p&gt;
+&lt;p&gt;Another big point is the different jobs for Jenkins. There are a lot of
+pipelines doing cool things. This blog is also deliver with Jenkins. I hope you
+find it all as exciting as I do. There will definitely be more to come.&lt;/p&gt;
+&lt;/div&gt;
+</content><category term="devops"></category><category term="jenkins"></category><category term="raspberry pi"></category><category term="devops"></category><category term="server"></category><category term="linux"></category></entry></feed>
