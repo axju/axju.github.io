@@ -42,10 +42,10 @@ pipeline {
       }
     }
 
-    stage('publish - raspberrypi') {
+    stage('publish - onion') {
       steps {
         withEnv(["HOME=${env.WORKSPACE}"]) {
-          sh 'python -m pelican content -s raspiconf.py'
+          sh 'python -m pelican content -s onionconf.py'
         }
         sshPublisher(
           publishers: [
@@ -72,7 +72,7 @@ pipeline {
       steps {
         withEnv(["HOME=${env.WORKSPACE}"]) {
           sh 'python -m pip install --user --upgrade ghp-import'
-          sh 'python -m pelican content -s publishconf.py'
+          sh 'python -m pelican content -s githubconf.py'
           sh 'python -m ghp_import output'
           git push origin gh-pages
         }
