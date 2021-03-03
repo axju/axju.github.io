@@ -15,7 +15,7 @@ pipeline {
         }
       }
     }
-    
+
     stage('publish - netcup') {
       when {
         branch 'master'
@@ -62,6 +62,20 @@ pipeline {
             )
           ]
         )
+      }
+    }
+
+    stage('publish - github') {
+      when {
+        branch 'master'
+      }
+      steps {
+        withEnv(["HOME=${env.WORKSPACE}"]) {
+          sh 'python -m pip install --user --upgrade ghp-import'
+          sh 'python -m pelican content -s publishconf.py'
+          sh 'python -m ghp_import output'
+          git push origin gh-pages
+        }
       }
     }
 
