@@ -51,7 +51,7 @@ pipeline {
     stage('publish - netcup dev') {
       steps {
         withEnv(["HOME=${env.WORKSPACE}"]) {
-          sh 'python -m pelican content -s publishconf.py'
+          sh 'python -m pelican content -s publishdevconf.py'
         }
         sshPublisher(
           publishers: [
