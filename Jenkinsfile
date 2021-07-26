@@ -45,6 +45,21 @@ pipeline {
             )
           ]
         )
+        sshPublisher(
+          publishers: [
+            sshPublisherDesc(
+              configName: 'netcup-projects',
+              sshRetry: [retries: 5, retryDelay: 10000],
+              transfers: [
+                sshTransfer(
+                  remoteDirectory: 'dev',
+                  removePrefix: 'output/',
+                  sourceFiles: 'output/**/*'
+                )
+              ]
+            )
+          ]
+        )
       }
     }
 
