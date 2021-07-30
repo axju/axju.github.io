@@ -42,7 +42,30 @@ pipeline {
       }
     }
 
-    stage('publish - onion') {
+    stage('publish - netcup dev') {
+      steps {
+        withEnv(["HOME=${env.WORKSPACE}"]) {
+          sh 'python -m pelican content -s publishdevconf.py'
+        }
+        sshPublisher(
+          publishers: [
+            sshPublisherDesc(
+              configName: 'netcup-projects',
+              sshRetry: [retries: 5, retryDelay: 10000],
+              transfers: [
+                sshTransfer(
+                  remoteDirectory: 'dev',
+                  removePrefix: 'output/',
+                  sourceFiles: 'output/**/*'
+                )
+              ]
+            )
+          ]
+        )
+      }
+    }
+
+    stage('publish - raspberrypi') {
       steps {
         withEnv(["HOME=${env.WORKSPACE}"]) {
           sh 'python -m pelican content -s onionconf.py'
