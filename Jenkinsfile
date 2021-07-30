@@ -15,13 +15,7 @@ pipeline {
         }
       }
     }
-    stage('build') {
-      steps {
-        withEnv(["HOME=${env.WORKSPACE}"]) {
-          sh 'python -m pelican content -s publishconf.py'
-        }
-      }
-    }
+
     stage('publish - netcup') {
       when {
         branch 'master'
@@ -74,7 +68,7 @@ pipeline {
     stage('publish - raspberrypi') {
       steps {
         withEnv(["HOME=${env.WORKSPACE}"]) {
-          sh 'python -m pelican content -s raspiconf.py'
+          sh 'python -m pelican content -s onionconf.py'
         }
         sshPublisher(
           publishers: [
@@ -93,7 +87,6 @@ pipeline {
         )
       }
     }
-
 
   }
   post {

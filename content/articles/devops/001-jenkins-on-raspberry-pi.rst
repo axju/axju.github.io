@@ -2,7 +2,6 @@ Jenkins meet Raspberry Pi
 =========================
 
 :date: 2021-02-07 20:15
-:modified: 2021-02-07 20:15
 :tags: jenkins, raspberry pi, devops, server, linux
 :summary: Yes, I like DevOps and the Raspberry Pi too. Now it's time to combine
           these and build a powerful DevOps server.
