@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <title>  Jenkins meet Nginx | axju
+</title>
+        <meta name="author" content="Axel Juraske" />
+        <meta name="keywords" content="jenkins,devops,server,linux,nginx" />
+        <meta name="description" content="Just a quick Nginx setup for Jenkins" />
+  <link rel="canonical" href="https://axju.github.io/posts/2021/02/jenkins-meet-nginx/index.html">
+
+
+  <link rel="stylesheet" href="https://axju.github.io/theme/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://axju.github.io/theme/css/fontawesome.min.css">
+  <link rel="stylesheet" href="https://axju.github.io/theme/css/pygments/native.min.css">
+  <link rel="stylesheet" href="https://axju.github.io/theme/css/theme.css">
+  <link rel="stylesheet" href="https://axju.github.io/theme/css/main.css">
+  <link rel="stylesheet" href="https://axju.github.io/theme/css/purecookie.css" async />
+  <script src="https://axju.github.io/theme/js/purecookie.js" async></script>
+
+  <link rel="alternate" type="application/atom+xml" title="Full Atom Feed"
+        href="https://axju.github.io/feeds/all.atom.xml">
+  <link rel="alternate" type="application/atom+xml" title="Categories Atom Feed"
+        href="https://axju.github.io/feeds/devops.atom.xml">  <script async src="https://www.googletagmanager.com/gtag/js?id=G-W0RC1HYD7Y"></script>
+  <script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-W0RC1HYD7Y');
+  </script>
+
+
+</head>
+
+<body>
+<a href="https://github.com/axju">
+<img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png" alt="Fork me on GitHub" />
+</a>
+  <header class="header">
+    <div class="container">
+<div class="row">
+    <div class="col-sm-4">
+      <a href="https://axju.github.io/">
+        <img class="img-fluid rounded" src=https://axju.github.io/images/logo.png alt="axju">
+      </a>
+    </div>
+  <div class="col-sm-8">
+    <h1 class="title"><a href="https://axju.github.io/">axju</a></h1>
+      <p class="text-muted">Just coding stuff</p>
+      <ul class="list-inline">
+            <li class="list-inline-item"><a href="https://axju.github.io/pages/projects/">Projects</a></li>
+            <li class=" list-inline-item text-muted">|</li>
+          <li class="list-inline-item"><a class="fab fa-github" href="https://github.com/axju" target="_blank"></a></li>
+          <li class="list-inline-item"><a class="fab fa-youtube" href="https://www.youtube.com/channel/UCFFrfCiHAh0gaQvGZBYMsuA" target="_blank"></a></li>
+          <li class="list-inline-item"><a class="fab fa-instagram" href="https://www.instagram.com/axju.py/" target="_blank"></a></li>
+          <li class="list-inline-item"><a class="fab fa-twitter" href="https://twitter.com/0xAxJu" target="_blank"></a></li>
+      </ul>
+  </div>
+</div>    </div>
+  </header>
+
+  <div class="main">
+    <div class="container">
+      <h1>  Jenkins meet Nginx
+</h1>
+      <hr>
+  <article class="article">
+    <header>
+      <ul class="list-inline">
+        <li class="list-inline-item text-muted" title="2021-02-16T20:15:00+01:00">
+          <i class="fas fa-clock"></i>
+          Tue 16 February 2021
+        </li>
+        <li class="list-inline-item">
+          <i class="fas fa-folder-open"></i>
+          <a href="https://axju.github.io/category/devops.html">devops</a>
+        </li>
+          <li class="list-inline-item">
+            <i class="fas fa-tag"></i>
+              <a href="https://axju.github.io/tag/jenkins.html">#jenkins</a>,               <a href="https://axju.github.io/tag/devops.html">#devops</a>,               <a href="https://axju.github.io/tag/server.html">#server</a>,               <a href="https://axju.github.io/tag/linux.html">#linux</a>,               <a href="https://axju.github.io/tag/nginx.html">#nginx</a>          </li>
+      </ul>
+    </header>
+    <div class="content">
+      <p>For a long time I run my Jenkins server only in my local Network. Therefore I
+don't setup a real web server. But if I want to have some nice shields with
+build status and code coverage, I need to make my Jenkins server public. And for
+this, I setup Nginx as a reverse proxy. To make It secure, I enable SSL with the
+certbot for <a class="reference external" href="https://letsencrypt.org">Let's Encrypt</a>. What wars rally easy.</p>
+<p>The official documentation is quite good,
+<a class="reference external" href="https://www.jenkins.io/doc/book/system-administration/reverse-proxy-configuration-nginx/">check them out</a>.
+If you go through my how to you have to change some values, like your domain. I
+think this is all you have to change. And of course you have to set up your
+domains and configure your router.</p>
+<p>Let us started. First install Nginx and certbot</p>
+<div class="highlight"><pre><span></span>sudo apt-get install -y nginx certbot python3-certbot-nginx
+</pre></div>
+<p>Then delete Nginx default site</p>
+<div class="highlight"><pre><span></span>sudo rm /etc/nginx/sites-enabled/*
+</pre></div>
+<p>and also create the log directory</p>
+<div class="highlight"><pre><span></span>sudo mkdir /var/log/nginx/jenkins/
+</pre></div>
+<p>Now we create the Jenkins configuration for Nginx. Create the file</p>
+<div class="highlight"><pre><span></span>sudo nano /etc/nginx/sites-available/jenkins
+</pre></div>
+<p>with</p>
+<div class="highlight"><pre><span></span><span class="k">map</span> <span class="nv">$http_upgrade</span> <span class="nv">$connection_upgrade</span> <span class="p">{</span>
+  <span class="kn">default</span> <span class="s">upgrade</span><span class="p">;</span>
+  <span class="kn">&#39;&#39;</span> <span class="s">close</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">server</span> <span class="p">{</span>
+  <span class="kn">listen</span> <span class="mi">80</span><span class="p">;</span>
+  <span class="kn">server_name</span> <span class="s">jenkins.example.com</span><span class="p">;</span>
+
+  <span class="kn">root</span> <span class="s">/var/run/jenkins/war/</span><span class="p">;</span>
+  <span class="kn">access_log</span> <span class="s">/var/log/nginx/jenkins/access.log</span><span class="p">;</span>
+  <span class="kn">error_log</span> <span class="s">/var/log/nginx/jenkins/error.log</span><span class="p">;</span>
+
+  <span class="kn">location</span> <span class="s">/</span> <span class="p">{</span>
+    <span class="kn">include</span> <span class="s">/etc/nginx/proxy_params</span><span class="p">;</span>
+
+    <span class="kn">proxy_pass</span>         <span class="s">http://localhost:8080</span><span class="p">;</span>
+    <span class="kn">proxy_read_timeout</span> <span class="s">90s</span><span class="p">;</span>
+    <span class="kn">proxy_redirect</span>     <span class="s">default</span><span class="p">;</span>
+    <span class="kn">proxy_http_version</span> <span class="mi">1</span><span class="s">.1</span><span class="p">;</span>
+
+    <span class="kn">proxy_set_header</span>   <span class="s">Connection</span>        <span class="nv">$connection_upgrade</span><span class="p">;</span>
+    <span class="kn">proxy_set_header</span>   <span class="s">Upgrade</span>           <span class="nv">$http_upgrade</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+<p>Now enable the site and restart Nginx</p>
+<div class="highlight"><pre><span></span>sudo ln -s /etc/nginx/sites-available/jenkins /etc/nginx/sites-enabled/
+sudo systemctl restart nginx
+</pre></div>
+<p>If something went wrong, you can check the configuration with</p>
+<div class="highlight"><pre><span></span>sudo nginx -t
+</pre></div>
+<p>The Jenkins server is now available
+<a class="reference external" href="http://jenkins.example.com">jenkins.example.com</a> Change the Jenkins server
+configuration so that the server only listen on the loclahost. Edit the file
+<em>/etc/default/jenkins</em></p>
+<div class="highlight"><pre><span></span>sudo nano /etc/default/jenkins
+</pre></div>
+<p>Find then <em>JENKINS_ARGS</em> and add <em>--httpListenAddress=127.0.0.1</em></p>
+<div class="highlight"><pre><span></span>...
+JENKINS_ARGS=&quot;--webroot=/var/cache/$NAME/war --httpPort=$HTTP_PORT --httpListenAddress=127.0.0.1&quot;
+</pre></div>
+<p>and restart Jenkins</p>
+<div class="highlight"><pre><span></span>sudo systemctl restart jenkins
+</pre></div>
+<div class="section" id="ssl-with-let-s-encrypt">
+<h2>SSL with Let's Encrypt</h2>
+<p>This really easy. Simple run this</p>
+<div class="highlight"><pre><span></span>sudo certbot --nginx -d jenkins.example.com
+</pre></div>
+<p>and you are done. This will also add a cron job that will update the certificate
+if it expires within 30 days.</p>
+</div>
+
+    </div>
+  </article>
+  <hr>
+  <div id="disqus_thread"></div>
+  <script>
+    var disqus_config = function() {
+      this.page.url = 'https://axju.github.io/posts/2021/02/jenkins-meet-nginx/index.html';
+      this.page.identifier = 'jenkins-meet-nginx';
+    };
+    (function() {
+      var d = document;
+      var s = d.createElement('script');
+      s.src = '//axju.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+  <noscript class="text-muted">
+    Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+  </noscript>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="container">
+<div class="row">
+  <ul class="col-sm-6 list-inline">
+    <li class="list-inline-item"><a href="https://axju.github.io/archives.html">Archives</a></li>
+    <li class="list-inline-item"><a href="https://axju.github.io/categories.html">Categories</a></li>
+      <li class="list-inline-item"><a href="https://axju.github.io/tags.html">Tags</a></li>
+
+      <li class=" list-inline-item text-muted">|</li>
+    <li class="list-inline-item"><a class="fas fa-rss" href="https://axju.github.io/feeds/all.atom.xml" target="_blank"></a></li>
+  </ul>
+  <p class="col-sm-6 text-sm-right text-muted">
+    Last update: 2021-08-02
+  </p>
+</div>    </div>
+  </footer>
+
+</body>
+
+</html>

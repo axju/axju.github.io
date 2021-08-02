@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom"><title>axju - misc</title><link href="https://axju.github.io/" rel="alternate"></link><link href="https://axju.github.io/feeds/misc.atom.xml" rel="self"></link><id>https://axju.github.io/</id><updated>2021-01-18T20:21:00+01:00</updated><subtitle>Just coding stuff</subtitle><entry><title>Hello World</title><link href="https://axju.github.io/posts/2021/01/hello-world/" rel="alternate"></link><published>2021-01-18T20:21:00+01:00</published><updated>2021-01-18T20:21:00+01:00</updated><author><name>axju</name></author><id>tag:axju.github.io,2021-01-18:/posts/2021/01/hello-world/</id><summary type="html">&lt;p class="first last"&gt;Just a new blog where I share my coding experience. Have fun.&lt;/p&gt;
+</summary><content type="html">&lt;p&gt;Just a new blog where I share my coding experience. Have fun.&lt;/p&gt;
+&lt;p&gt;I built it with Pelican and the them
+&lt;a class="reference external" href="https://github.com/nairobilug/pelican-alchemy"&gt;alchemy&lt;/a&gt;.
+Check this out, if you like nice clean bootstrap design.&lt;/p&gt;
+&lt;p&gt;The source will be available on &lt;a class="reference external" href="https://github.com/axju/blogging"&gt;github&lt;/a&gt;.&lt;/p&gt;
+</content><category term="misc"></category><category term="hello"></category><category term="world"></category></entry></feed>

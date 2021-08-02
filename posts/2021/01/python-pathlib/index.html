@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <title>  Python Pathlib | axju
+</title>
+        <meta name="author" content="Axel Juraske" />
+        <meta name="keywords" content="python" />
+        <meta name="description" content="I know the Pathlib is nothing new, but I only discovered in the new django default settings." />
+  <link rel="canonical" href="https://axju.github.io/posts/2021/01/python-pathlib/index.html">
+
+
+  <link rel="stylesheet" href="https://axju.github.io/theme/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://axju.github.io/theme/css/fontawesome.min.css">
+  <link rel="stylesheet" href="https://axju.github.io/theme/css/pygments/native.min.css">
+  <link rel="stylesheet" href="https://axju.github.io/theme/css/theme.css">
+  <link rel="stylesheet" href="https://axju.github.io/theme/css/main.css">
+  <link rel="stylesheet" href="https://axju.github.io/theme/css/purecookie.css" async />
+  <script src="https://axju.github.io/theme/js/purecookie.js" async></script>
+
+  <link rel="alternate" type="application/atom+xml" title="Full Atom Feed"
+        href="https://axju.github.io/feeds/all.atom.xml">
+  <link rel="alternate" type="application/atom+xml" title="Categories Atom Feed"
+        href="https://axju.github.io/feeds/python.atom.xml">  <script async src="https://www.googletagmanager.com/gtag/js?id=G-W0RC1HYD7Y"></script>
+  <script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-W0RC1HYD7Y');
+  </script>
+
+
+</head>
+
+<body>
+<a href="https://github.com/axju">
+<img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png" alt="Fork me on GitHub" />
+</a>
+  <header class="header">
+    <div class="container">
+<div class="row">
+    <div class="col-sm-4">
+      <a href="https://axju.github.io/">
+        <img class="img-fluid rounded" src=https://axju.github.io/images/logo.png alt="axju">
+      </a>
+    </div>
+  <div class="col-sm-8">
+    <h1 class="title"><a href="https://axju.github.io/">axju</a></h1>
+      <p class="text-muted">Just coding stuff</p>
+      <ul class="list-inline">
+            <li class="list-inline-item"><a href="https://axju.github.io/pages/projects/">Projects</a></li>
+            <li class=" list-inline-item text-muted">|</li>
+          <li class="list-inline-item"><a class="fab fa-github" href="https://github.com/axju" target="_blank"></a></li>
+          <li class="list-inline-item"><a class="fab fa-youtube" href="https://www.youtube.com/channel/UCFFrfCiHAh0gaQvGZBYMsuA" target="_blank"></a></li>
+          <li class="list-inline-item"><a class="fab fa-instagram" href="https://www.instagram.com/axju.py/" target="_blank"></a></li>
+          <li class="list-inline-item"><a class="fab fa-twitter" href="https://twitter.com/0xAxJu" target="_blank"></a></li>
+      </ul>
+  </div>
+</div>    </div>
+  </header>
+
+  <div class="main">
+    <div class="container">
+      <h1>  Python Pathlib
+</h1>
+      <hr>
+  <article class="article">
+    <header>
+      <ul class="list-inline">
+        <li class="list-inline-item text-muted" title="2021-01-29T20:15:00+01:00">
+          <i class="fas fa-clock"></i>
+          Fri 29 January 2021
+        </li>
+        <li class="list-inline-item">
+          <i class="fas fa-folder-open"></i>
+          <a href="https://axju.github.io/category/python.html">python</a>
+        </li>
+          <li class="list-inline-item">
+            <i class="fas fa-tag"></i>
+              <a href="https://axju.github.io/tag/python.html">#python</a>          </li>
+      </ul>
+    </header>
+    <div class="content">
+      <p>For a long time I ignore pathlib, but then came new django release with this in
+the default settings.</p>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+
+<span class="c1"># Build paths inside the project like this: BASE_DIR / &#39;subdir&#39;.</span>
+<span class="n">BASE_DIR</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">parent</span>
+</pre></div>
+<p>I researched and found these links very helpful:</p>
+<blockquote>
+<ul class="simple">
+<li><a class="reference external" href="https://realpython.com/python-pathlib/">Real Python</a></li>
+<li><a class="reference external" href="https://pbpython.com/pathlib-intro.html">Practical Business Python</a></li>
+<li><a class="reference external" href="https://docs.python.org/3/library/pathlib.html">Python Docs</a></li>
+</ul>
+</blockquote>
+<p>For more information check this out. I don't want to explain it in detail, just
+give an example.</p>
+<div class="section" id="everything-is-an-object">
+<h2>Everything is an object</h2>
+<p>The old days I uses the os.path module to work with paths. To check if a file
+exist I run this:</p>
+<div class="highlight"><pre><span></span><span class="o">&gt;&gt;&gt;</span> <span class="kn">import</span> <span class="nn">os</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">path</span> <span class="o">=</span> <span class="s1">&#39;pyth/to/my/file&#39;</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+<span class="kc">False</span>
+</pre></div>
+<p>There the path is a string. With the <em>new</em> pathlib module, you can creates a
+path object with some nice functions.</p>
+<div class="highlight"><pre><span></span><span class="o">&gt;&gt;&gt;</span> <span class="kn">import</span> <span class="nn">pathlib</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">path</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="s1">&#39;path/to/my/file&#39;</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span>
+<span class="kc">False</span>
+</pre></div>
+<p>The path object has more than just the function <em>exist()</em>. You can do everything
+similar to the os.path module and more.</p>
+</div>
+<div class="section" id="example">
+<h2>Example</h2>
+<p>This create the folder <em>.axju</em> in your home folder and the file <em>data.txt</em> with
+the content <em>hello</em>.</p>
+<p>With <strong>pathlib</strong>:</p>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+
+<span class="n">data_file</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">home</span><span class="p">()</span> <span class="o">/</span> <span class="s1">&#39;.axju&#39;</span> <span class="o">/</span> <span class="s1">&#39;data.txt&#39;</span>
+<span class="n">data_file</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="k">with</span> <span class="n">data_File</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+    <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;hello&#39;</span><span class="p">)</span>
+</pre></div>
+<p>With <strong>os.path</strong>:</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+
+<span class="n">home</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="s1">&#39;~&#39;</span><span class="p">)</span>
+<span class="n">home_axju_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">home</span><span class="p">,</span> <span class="s1">&#39;.axju&#39;</span><span class="p">)</span>
+<span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">home_axju_dir</span><span class="p">):</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">home_axju_dir</span><span class="p">)</span>
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">home_axju_dir</span><span class="p">,</span> <span class="s1">&#39;data.txt&#39;</span><span class="p">),</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+    <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;hello&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+
+    </div>
+  </article>
+  <hr>
+  <div id="disqus_thread"></div>
+  <script>
+    var disqus_config = function() {
+      this.page.url = 'https://axju.github.io/posts/2021/01/python-pathlib/index.html';
+      this.page.identifier = 'python-pathlib';
+    };
+    (function() {
+      var d = document;
+      var s = d.createElement('script');
+      s.src = '//axju.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+  <noscript class="text-muted">
+    Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+  </noscript>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="container">
+<div class="row">
+  <ul class="col-sm-6 list-inline">
+    <li class="list-inline-item"><a href="https://axju.github.io/archives.html">Archives</a></li>
+    <li class="list-inline-item"><a href="https://axju.github.io/categories.html">Categories</a></li>
+      <li class="list-inline-item"><a href="https://axju.github.io/tags.html">Tags</a></li>
+
+      <li class=" list-inline-item text-muted">|</li>
+    <li class="list-inline-item"><a class="fas fa-rss" href="https://axju.github.io/feeds/all.atom.xml" target="_blank"></a></li>
+  </ul>
+  <p class="col-sm-6 text-sm-right text-muted">
+    Last update: 2021-08-02
+  </p>
+</div>    </div>
+  </footer>
+
+</body>
+
+</html>

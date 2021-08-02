@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <title>  Jenkins meet Raspberry Pi | axju
+</title>
+        <meta name="author" content="Axel Juraske" />
+        <meta name="keywords" content="jenkins,raspberry pi,devops,server,linux" />
+        <meta name="description" content="Yes, I like DevOps and the Raspberry Pi too. Now it&#39;s time to combine these and build a powerful DevOps server." />
+  <link rel="canonical" href="https://axju.github.io/posts/2021/02/jenkins-meet-raspberry-pi/index.html">
+
+
+  <link rel="stylesheet" href="https://axju.github.io/theme/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://axju.github.io/theme/css/fontawesome.min.css">
+  <link rel="stylesheet" href="https://axju.github.io/theme/css/pygments/native.min.css">
+  <link rel="stylesheet" href="https://axju.github.io/theme/css/theme.css">
+  <link rel="stylesheet" href="https://axju.github.io/theme/css/main.css">
+  <link rel="stylesheet" href="https://axju.github.io/theme/css/purecookie.css" async />
+  <script src="https://axju.github.io/theme/js/purecookie.js" async></script>
+
+  <link rel="alternate" type="application/atom+xml" title="Full Atom Feed"
+        href="https://axju.github.io/feeds/all.atom.xml">
+  <link rel="alternate" type="application/atom+xml" title="Categories Atom Feed"
+        href="https://axju.github.io/feeds/devops.atom.xml">  <script async src="https://www.googletagmanager.com/gtag/js?id=G-W0RC1HYD7Y"></script>
+  <script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-W0RC1HYD7Y');
+  </script>
+
+
+</head>
+
+<body>
+<a href="https://github.com/axju">
+<img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png" alt="Fork me on GitHub" />
+</a>
+  <header class="header">
+    <div class="container">
+<div class="row">
+    <div class="col-sm-4">
+      <a href="https://axju.github.io/">
+        <img class="img-fluid rounded" src=https://axju.github.io/images/logo.png alt="axju">
+      </a>
+    </div>
+  <div class="col-sm-8">
+    <h1 class="title"><a href="https://axju.github.io/">axju</a></h1>
+      <p class="text-muted">Just coding stuff</p>
+      <ul class="list-inline">
+            <li class="list-inline-item"><a href="https://axju.github.io/pages/projects/">Projects</a></li>
+            <li class=" list-inline-item text-muted">|</li>
+          <li class="list-inline-item"><a class="fab fa-github" href="https://github.com/axju" target="_blank"></a></li>
+          <li class="list-inline-item"><a class="fab fa-youtube" href="https://www.youtube.com/channel/UCFFrfCiHAh0gaQvGZBYMsuA" target="_blank"></a></li>
+          <li class="list-inline-item"><a class="fab fa-instagram" href="https://www.instagram.com/axju.py/" target="_blank"></a></li>
+          <li class="list-inline-item"><a class="fab fa-twitter" href="https://twitter.com/0xAxJu" target="_blank"></a></li>
+      </ul>
+  </div>
+</div>    </div>
+  </header>
+
+  <div class="main">
+    <div class="container">
+      <h1>  Jenkins meet Raspberry Pi
+</h1>
+      <hr>
+  <article class="article">
+    <header>
+      <ul class="list-inline">
+        <li class="list-inline-item text-muted" title="2021-02-07T20:15:00+01:00">
+          <i class="fas fa-clock"></i>
+          Sun 07 February 2021
+        </li>
+        <li class="list-inline-item">
+          <i class="fas fa-folder-open"></i>
+          <a href="https://axju.github.io/category/devops.html">devops</a>
+        </li>
+          <li class="list-inline-item">
+            <i class="fas fa-tag"></i>
+              <a href="https://axju.github.io/tag/jenkins.html">#jenkins</a>,               <a href="https://axju.github.io/tag/raspberry-pi.html">#raspberry pi</a>,               <a href="https://axju.github.io/tag/devops.html">#devops</a>,               <a href="https://axju.github.io/tag/server.html">#server</a>,               <a href="https://axju.github.io/tag/linux.html">#linux</a>          </li>
+      </ul>
+    </header>
+    <div class="content">
+      <p>First the question <strong>why</strong>? And that's a very good question. There are so many
+different tools for CI/CD. Why should I set up something of my own? Obviously
+because it's fun and you learn something new. But I also don't like to work with
+a black box. I want full control, change everything.</p>
+<p>And <strong>why</strong> Jenkins and a Raspberry Pi? I don't want to spend a lot of money
+either, so no cloud. In my opinion, the Raspberry Pi is the best compromise
+between long-term availability and electricity costs. And it's just for fun, so
+if it goes down no one will care. Maybe I'm wrong, but I think Jenkins is the
+best open source automation server with low system resources. Perfect for a
+Raspberry Pi.</p>
+<p>I won't go into much detail about each step. When I set up my server, I just
+wrote everything down and now summarize it briefly. I have obtained my
+information on:</p>
+<blockquote>
+<ul class="simple">
+<li><a class="reference external" href="https://www.jenkins.io/doc/book/installing/linux/">JenkinsDocs</a></li>
+<li><a class="reference external" href="https://raspberrytips.com/install-jenkins-raspberry-pi/">RaspberryTips</a></li>
+<li><a class="reference external" href="https://pimylifeup.com/jenkins-raspberry-pi/">PiMyLifeUp</a></li>
+<li><a class="reference external" href="https://www.raspberrypi.org/documentation/configuration/security.md">RaspberryPi</a></li>
+</ul>
+</blockquote>
+<p>As I was writing this, I realized that my full setup is too much for one post.
+So this is only the first part and there is more to come. If you find a mistake
+or something is unclear, please write a comment.</p>
+<div class="section" id="setup-the-raspberry-pi">
+<h2>Setup the Raspberry Pi</h2>
+<p>I'm using a Raspberry Pi with <em>Raspberry Pi OS Lite</em>. After writing the
+operating system to the SD card, I create an empty file <em>SSH</em> in the root
+directory of the SD card. This will enable the SSH server so you can simply log
+in using SSH. No need to connect a keyboard or monitor. Just scan your network
+with <em>nmap</em> and then connect with the default username=pi and password=raspberry.
+You can also check your router to find the IP of your Raspberry Pi.</p>
+<p>I run this</p>
+<div class="highlight"><pre><span></span>nmap <span class="m">192</span>.168.178.* -p <span class="m">22</span> --open
+</pre></div>
+<p>to find the IP. Then I connect with</p>
+<div class="highlight"><pre><span></span>ssh pi@192.168.178.35
+</pre></div>
+<p>Now it's time to make your Pi just a little bit secure. We create a new user and
+add them to the <em>sudo</em> group.</p>
+<div class="highlight"><pre><span></span>sudo adduser axju
+sudo usermod -a -G adm,dialout,cdrom,sudo,audio,video,plugdev,games,users,input,netdev,gpio,i2c,spi axju
+</pre></div>
+<p>Reconnect and delete the default user <em>pi</em></p>
+<div class="highlight"><pre><span></span><span class="nb">exit</span>
+ssh axju@192.168.178.35
+sudo deluser -remove-home pi
+</pre></div>
+<p>Maybe you have to kill pi's process</p>
+<div class="highlight"><pre><span></span>sudo pkill -u pi
+</pre></div>
+<p>Checkout <a class="reference external" href="https://www.raspberrypi.org/documentation/configuration/security.md">this</a>,
+if you want to make your Raspberry Pi even more secure.</p>
+<div class="section" id="change-hostname-optional">
+<h3>Change hostname (optional)</h3>
+<p>There is no need to change the name, but I like it. You can use the IP address
+to connect to the server, but you can also use the hostname. So this should also
+work:</p>
+<div class="highlight"><pre><span></span>ssh axju@raspberrypi.local
+</pre></div>
+<p>But I will change <em>raspberrypi.local</em> to <em>jenkins.local</em>. First open the
+<em>/etc/hosts</em> file and update the lines with your old hostname:</p>
+<div class="highlight"><pre><span></span>sudo nano /etc/hosts
+</pre></div>
+<p>from <tt class="docutils literal">raspberrypi</tt> to <tt class="docutils literal">jenkins</tt>. Next change the <em>/etc/hostname</em></p>
+<div class="highlight"><pre><span></span>sudo <span class="nb">echo</span> <span class="s2">&quot;jenkins&quot;</span> <span class="p">|</span> sudo tee /etc/hostname
+</pre></div>
+<p>And finally run</p>
+<div class="highlight"><pre><span></span>sudo hostname jenkins
+</pre></div>
+<p>and reboot</p>
+<div class="highlight"><pre><span></span>sudo reboot
+</pre></div>
+<p>Now you can connect with <tt class="docutils literal">ssh axju&#64;jenkins.local</tt></p>
+</div>
+</div>
+<div class="section" id="install-jenkins">
+<h2>Install Jenkins</h2>
+<p>This is really easy. First, update your system and install Java</p>
+<div class="highlight"><pre><span></span>sudo apt update
+sudo apt upgrade -y
+sudo apt install -y openjdk-11-jdk
+</pre></div>
+<p>To make sure it worked, check the version of java</p>
+<div class="highlight"><pre><span></span>java --version
+</pre></div>
+<p>Now add Jenkins source to your <em>sources.list</em></p>
+<div class="highlight"><pre><span></span>wget -q -O - https://pkg.jenkins.io/debian/jenkins.io.key <span class="p">|</span> sudo apt-key add -
+sudo sh -c <span class="s1">&#39;echo deb https://pkg.jenkins.io/debian-stable binary/ &gt; /etc/apt/sources.list.d/jenkins.list&#39;</span>
+</pre></div>
+<p>No errors until now, then install Jenkins</p>
+<div class="highlight"><pre><span></span>sudo apt update
+sudo apt install -y jenkins
+</pre></div>
+<p>Make sure that Jenkins is running</p>
+<div class="highlight"><pre><span></span>sudo systemctl status jenkins
+</pre></div>
+<p>That was all. After the installing the post-installation setup wizard begins.
+Fist unlock Jenkins. If you visited
+<a class="reference external" href="http://jenkins.local:8080">http://jenkins.local:8080</a>
+the first time, you have to enter a secret key. You will get it with</p>
+<div class="highlight"><pre><span></span>sudo cat /var/lib/jenkins/secrets/initialAdminPassword
+</pre></div>
+<p>Now you can install some plugins. I uses the options <em>Install suggested plugins</em>
+and create a admin account. If you get stuck are interested in more information,
+check the <a class="reference external" href="https://www.jenkins.io/doc/book/getting-started/">documentation</a>.</p>
+<img alt="alternate text" src="https://axju.github.io/images/articels/jenkins/jenkins-001.png" style="width: 57%;" />
+<img alt="alternate text" src="https://axju.github.io/images/articels/jenkins/jenkins-002.png" style="width: 42%;" />
+</div>
+<div class="section" id="conclusion">
+<h2>Conclusion</h2>
+<p>You see, install Jenkins is not that complicated. But for now, this is only a
+really simple setup. So what coming next? There is a lot of stuff to do. Fist
+you can improve the power of your server with some agents. The Raspberry Pi
+doesn't use a lot of electricity, but it doesn't have a lot of power either.
+On my final server, all operations were performed on the agents. This way the Pi
+won't sweat. I'm also running Jenkins behind a reverse proxy and enabled ssl.</p>
+<p>Another big point is the different jobs for Jenkins. There are a lot of
+pipelines doing cool things. This blog is also deliver with Jenkins. I hope you
+find it all as exciting as I do. There will definitely be more to come.</p>
+</div>
+
+    </div>
+  </article>
+  <hr>
+  <div id="disqus_thread"></div>
+  <script>
+    var disqus_config = function() {
+      this.page.url = 'https://axju.github.io/posts/2021/02/jenkins-meet-raspberry-pi/index.html';
+      this.page.identifier = 'jenkins-meet-raspberry-pi';
+    };
+    (function() {
+      var d = document;
+      var s = d.createElement('script');
+      s.src = '//axju.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+  <noscript class="text-muted">
+    Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+  </noscript>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="container">
+<div class="row">
+  <ul class="col-sm-6 list-inline">
+    <li class="list-inline-item"><a href="https://axju.github.io/archives.html">Archives</a></li>
+    <li class="list-inline-item"><a href="https://axju.github.io/categories.html">Categories</a></li>
+      <li class="list-inline-item"><a href="https://axju.github.io/tags.html">Tags</a></li>
+
+      <li class=" list-inline-item text-muted">|</li>
+    <li class="list-inline-item"><a class="fas fa-rss" href="https://axju.github.io/feeds/all.atom.xml" target="_blank"></a></li>
+  </ul>
+  <p class="col-sm-6 text-sm-right text-muted">
+    Last update: 2021-08-02
+  </p>
+</div>    </div>
+  </footer>
+
+</body>
+
+</html>

