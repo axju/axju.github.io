@@ -13,7 +13,14 @@ with some penetration tools on
 Mostly I hacked someone WLAN, or stuff like this.
 
 Now its time to play with Metasploit. I don't go into too much detail, I just
-try it out and present the results.
+try it out and present the results. If you want you can watch the video or read
+the text below.
+
+.. youtube:: 1B1bzxdn7sM
+  :class: text-center
+  :width: 560
+  :height: 315
+  :allowfullscreen: yes
 
 
 The Basics

@@ -43,7 +43,11 @@ PAGE_URL = 'pages/{slug}/'
 PAGE_SAVE_AS = 'pages/{slug}/index.html'
 
 PLUGIN_PATHS = ['plugins']
-PLUGINS = ['fontawesome', 'shields']
+PLUGINS = [
+    'pelican_youtube',
+    'fontawesome',
+    'shields'
+]
 # PLUGINS = [
 #     'pelican_fontawesome',
 # ]

@@ -9,7 +9,7 @@ pipeline {
     stage('setup') {
       steps {
         withEnv(["HOME=${env.WORKSPACE}"]) {
-          sh 'python -m pip install --user --upgrade pip pelican'
+          sh 'python -m pip install --user --upgrade pip pelican pelican-youtube'
           sh 'python --version'
           sh 'python -m pelican --version'
         }
